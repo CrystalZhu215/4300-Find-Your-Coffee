@@ -1,5 +1,3 @@
-from bs4 import BeautifulSoup
-import requests
 import praw
 from praw.models import MoreComments
 import pprint
@@ -11,26 +9,9 @@ reddit = praw.Reddit(
 )
 print(reddit.read_only)
 
-# Show listings
+# Show listings (general): top_ten_results = [s for s in reddit.subreddit("coffee").new(limit=10)]
 
-'''
-top_ten_results = [s for s in reddit.subreddit("coffee").new(limit=10)]
-
-submission = top_ten_results[1]
-comment = submission.comments[0]
-subcomment = comment.replies[0]
-
-# To get attributes of an element: pprint.pprint(vars(comment))
-
-print(submission.selftext)
-print()
-print(comment.body)
-print()
-print(subcomment.body)
-
-'''
-
-# Search a subreddit
+# Search a subreddit using a query:
 
 def print_if_query_found(query, comment):
     if isinstance(comment, MoreComments):
@@ -47,7 +28,9 @@ def print_if_query_found(query, comment):
     for r in comment.replies:
         print_if_query_found(query, r)
 
-query = 'modcup'
+# query issue: 'press coffee' -> 'french press coffee'
+query = "Buon Caffe"
+query = query.lower()
 search_results = [s for s in reddit.subreddit("coffee").search(query=query)]
 
 for submission in search_results:
@@ -62,14 +45,3 @@ for submission in search_results:
     submission.comments.replace_more(limit=None)
     for c in submission.comments:
         print_if_query_found(query, c)
-
-'''
-def getdata(url):
-    r = requests.get(url)
-    return r.text
-
-url = "https://www.reddit.com/r/coffee.json"
-htmldata = getdata(url)
-print(htmldata)
-
-'''
