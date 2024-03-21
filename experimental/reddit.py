@@ -5,8 +5,8 @@ from praw.models import MoreComments
 import pprint
 
 reddit = praw.Reddit(
-    client_id="4E_NVygep-9QgyC9yf1Psg",
-    client_secret="ZhEY7IYa9w-KkVDWf-RrrcOTeiIYGQ",
+    client_id="your client id",
+    client_secret="your client secret",
     user_agent="macos:findyourcoffee:v1.0.0 (by u/worm-dealer)"
 )
 print(reddit.read_only)
