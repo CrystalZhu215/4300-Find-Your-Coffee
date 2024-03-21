@@ -4,8 +4,8 @@ import praw
 import pprint
 
 reddit = praw.Reddit(
-    client_id="omMsy1wzYQDvCkX69ARAKA",
-    client_secret="u_DjzaJOkMH1rkaa4BYAiNrctZHJYA",
+    client_id="your client id here",
+    client_secret="your client secret here",
     user_agent="macos:findyourcoffee:v1.0.0 (by u/worm-dealer)"
 )
 
