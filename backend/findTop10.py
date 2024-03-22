@@ -12,7 +12,7 @@ def findTopTen(user_query):
     from numpy import linalg as LA
     import numpy as np
 
-    df = pd.read_csv("backend/data/coffee_fix.csv")
+    df = pd.read_csv("data/coffee_fix.csv")
 
     combined_descriptions = df[["desc_1"]].apply(lambda x: " ".join(x.dropna()), axis=1)
     combined_names = df[["name"]].apply(lambda x: " ".join(x.dropna()), axis=1)
@@ -28,7 +28,6 @@ def findTopTen(user_query):
 
     index_to_vocab = {i: v for i, v in enumerate(vectorizer.get_feature_names_out())}
     vocab_to_index = {index_to_vocab[i]: i for i in index_to_vocab}
-    print(vocab_to_index)
     doc_to_index = {v: i for i, v in enumerate(combined_names)}
 
     # Replace query with the user query here
@@ -55,5 +54,5 @@ def findTopTen(user_query):
     similarities.sort(reverse=True)
     topTen = similarities[:10]
 
-    Names = [(combined_names[i], combined_descriptions[i]) for x, i in topTen]
-    return Names
+    #Names = [(combined_names[i], combined_descriptions[i]) for x, i in topTen]
+    return [{"coffee_name": combined_names[i], "description": combined_descriptions[i]} for _, i in topTen]
