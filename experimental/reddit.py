@@ -1,6 +1,19 @@
 import praw
 from praw.models import MoreComments
+
+import nltk
+from nltk.sentiment.vader import SentimentIntensityAnalyzer
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
+from nltk.stem import WordNetLemmatizer
+
+from sklearn.metrics import confusion_matrix
+from sklearn.metrics import classification_report
+
 import pprint
+
+# This needs to be run the first time you run this script ever
+# nltk.download('all')
 
 reddit = praw.Reddit(
     client_id="your client id",
@@ -13,35 +26,61 @@ print(reddit.read_only)
 
 # Search a subreddit using a query:
 
-def print_if_query_found(query, comment):
-    if isinstance(comment, MoreComments):
-        return
+def find_query_in_comments(query, comment):
 
-    lower_text = comment.body.lower()
-    if query in lower_text:
-        lines = lower_text.split('\n')
+    def find_query_in_comments_acc(reply):
+        if isinstance(reply, MoreComments):
+            return []
+
+        results = []
+        lower_text = reply.body.lower()
+        lines = lower_text.split('. ')
         for line in lines:
             if query in line:
-                print(line)
-                print('-------------------------------------------------------------------------')
+                results.append(line)
 
-    for r in comment.replies:
-        print_if_query_found(query, r)
+        for r in reply.replies:
+            results += find_query_in_comments_acc(r)
+        
+        return results
+
+    return find_query_in_comments_acc(comment)
+
+def preprocess_text(text):
+
+    tokens = word_tokenize(text.lower())
+    filtered_tokens = [token for token in tokens if token not in stopwords.words('english')]
+
+    lemmatizer = WordNetLemmatizer()
+    lemmatized_tokens = [lemmatizer.lemmatize(token) for token in filtered_tokens]
+
+    processed_text = ' '.join(lemmatized_tokens)
+
+    return processed_text
 
 # query issue: 'press coffee' -> 'french press coffee'
-query = "Buon Caffe"
+query = "modcup"
 query = query.lower()
 search_results = [s for s in reddit.subreddit("coffee").search(query=query)]
 
+query_found = []
 for submission in search_results:
     lower_text = submission.selftext.lower()
-    if query in lower_text:
-        lines = lower_text.split('\n')
-        for line in lines:
-            if query in line:
-                print(line)
-                print('-------------------------------------------------------------------------')
+    lines = '. '.join(lower_text.split('\n')).split('. ')
+    for line in lines:
+        if query in line:
+            query_found.append(line)
 
     submission.comments.replace_more(limit=None)
     for c in submission.comments:
-        print_if_query_found(query, c)
+        query_found += find_query_in_comments(query, c)
+
+for i, result in enumerate(query_found):
+    print(str(i+1) + ')', result)
+
+analyzer = SentimentIntensityAnalyzer()
+
+for text in query_found:
+    processed_text = preprocess_text(text)
+    sentiments = analyzer.polarity_scores(text)
+    print(sentiments)
