@@ -1,3 +1,11 @@
+body {
+    background-color: #e5d3b3;
+  }
+
+#filter-text-val {
+    background-color: #e5d3b3;
+}
+
 .full-body-container{
     position: absolute;
     top:0;
@@ -12,41 +20,13 @@
     flex-direction: column;
 }
 
-#google-c{
-    color:#4285F4;
+.coffee-project-title {
+    margin-top: 25px;
+    color: #3c280d;
+    font-size: 60px;
+    font-weight: bold;
 }
 
-#google-s{
-    color:#DB4437;
-}
-
-#google-4{
-    color:	#F4B400;
-}
-
-#google-3{
-    color:	#4285F4;
-}
-
-#google-0-1{
-    color:	#0F9D58;
-}
-
-#google-0-2{
-    color:#DB4437;
-}
-
-.google-colors{
-    display: flex;
-    align-items: center;
-    font-size: 48px;
-    font-family: 'Open Sans', sans-serif;
-}
-
-.google-colors h1{
-    margin-bottom: 0;
-    margin-right: 3px;
-}
 
 .input-box{
     border-radius: 50px;
@@ -79,7 +59,7 @@
 
 #answer-box{
     width: 700px;
-    margin-top:50px; 
+    margin-top:200px; 
 }
 
 .episode-title{
