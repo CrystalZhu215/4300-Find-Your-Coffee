@@ -32,7 +32,8 @@ def findTopTen(user_query):
     doc_to_index = {v: i for i, v in enumerate(combined_names)}
 
     # Replace query with the user query here
-    query = "Nutty and Sweet"
+
+    query = user_query
     query = query.lower()
     query = query.split(" ")
 
