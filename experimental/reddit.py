@@ -13,35 +13,42 @@ print(reddit.read_only)
 
 # Search a subreddit using a query:
 
-def print_if_query_found(query, comment):
-    if isinstance(comment, MoreComments):
-        return
+def find_query_in_comments(query, comment):
 
-    lower_text = comment.body.lower()
-    if query in lower_text:
+    def find_query_in_comments_acc(reply):
+        if isinstance(reply, MoreComments):
+            return []
+
+        results = []
+        lower_text = reply.body.lower()
         lines = lower_text.split('\n')
         for line in lines:
             if query in line:
-                print(line)
-                print('-------------------------------------------------------------------------')
+                results.append(line)
 
-    for r in comment.replies:
-        print_if_query_found(query, r)
+        for r in reply.replies:
+            results += find_query_in_comments_acc(r)
+        
+        return results
+
+    return find_query_in_comments_acc(comment)
 
 # query issue: 'press coffee' -> 'french press coffee'
-query = "Buon Caffe"
+query = "modcup"
 query = query.lower()
 search_results = [s for s in reddit.subreddit("coffee").search(query=query)]
 
+query_found = []
 for submission in search_results:
     lower_text = submission.selftext.lower()
-    if query in lower_text:
-        lines = lower_text.split('\n')
-        for line in lines:
-            if query in line:
-                print(line)
-                print('-------------------------------------------------------------------------')
+    lines = lower_text.split('\n')
+    for line in lines:
+        if query in line:
+            query_found.append(line)
 
     submission.comments.replace_more(limit=None)
     for c in submission.comments:
-        print_if_query_found(query, c)
+        query_found += find_query_in_comments(query, c)
+
+for i, result in enumerate(query_found):
+    print(str(i+1) + ')', result)
