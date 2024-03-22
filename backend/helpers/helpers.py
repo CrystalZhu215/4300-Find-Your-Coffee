@@ -2,7 +2,6 @@ import os
 from nltk.tokenize import TreebankWordTokenizer
 
 
-
 def insertion_cost(message, j):
     return 1
 
