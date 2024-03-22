@@ -7,6 +7,8 @@
 - [Running Locally](#running-locally)
 - [Uploading Large Files](#uploading-large-files)
 - [Debugging Some Basic Errors](#debugging-some-basic-errors)
+- [Virtual Environments and Dependency Tracking](#virtual-environments-and-dependency-tracking)
+- [Troubleshooting](#troubleshooting)
 - [General comments from the author](#general-comments-from-the-author)
 
 ## Summary
@@ -57,8 +59,9 @@ For the initial deployment, only one member of your team needs to follow the ste
 
 ## Running locally
 
-This is not formally a requirement of P01.  This is to help you test and develop your app locally; we recommend each member of the team to try this out. 
-
+- This is not formally a requirement of P01.  This is to help you test and develop your app locally; we recommend each member of the team to try this out. 
+- Ensure that you have Python version 3.10 or above installed on your machine (ideally in a virtual environment). Some of the libraries and code used in the template, as well as on the server end, are only compatible with Python versions 3.10 and above.
+  
 ### Step 1: Set up a virtual environment
 Create a virtual environment in Python. You may continue using the one you setup for assignment if necessary. To review how to set up a virtual environment and activate it, refer to A0 assignment writeup.
 
@@ -91,12 +94,31 @@ You can change data in this file to your project's json data, but do not delete 
 - If it isn't a 401, first try checking the logs or container status. Check if the containers are alive or not, which could cause issues. If the containers are down, try stopping and starting them. If that does not work, you can report it on ED.
 - If data isn't important, destroying and then cloning and re-building containers will usually fix the issue (assuming there's no logical error)
 
+## Virtual Environments and Dependency Tracking
+- It's essential to avoid uploading your virtual environments, as they can significantly inflate the size of your project. Large repositories will lead to issues during cloning, especially when memory limits are crossed (Limit – 2GB). 
+To prevent your virtual environment from being tracked and uploaded to GitHub, follow these steps:
+1. **Exclude Virtual Environment**
+   - Navigate to your project's root directory and locate the `.gitignore` file. 
+   - Add the name of your virtual environment directory to this file in the following format: `<virtual_environment_name>/`. This step ensures that Git ignores the virtual environment folder during commits.
+
+2. **Remove Previously Committed Virtual Environment**
+   - If you've already committed your virtual environment to the repository, you can remove it from the remote repository by using Git commands to untrack and delete it. You will find resources online to do so.
+Afterward, ensure to follow step 1 to prevent future tracking of virtual environment.
+
+3. **Managing Dependencies**
+    - Add all the new libraries you downloaded using pip install for your project to the existing `requirements.txt` file. To do so,
+    - Navigate to your project backend directory and run the command `pip freeze > requirements.txt`. This command will create or overwrite the `requirements.txt` file with a list of installed packages and their versions. 
+    - Our server will use your project’s `requirements.txt` file to install all required packages, ensuring that your project runs seamlessly.
+
+## Troubleshooting
+
+The attached google document includes a compilation of frequent issues encountered by students across various project stages, detailing whether these issues have been resolved and the solutions that were effective. We will continue to update this list with new information.
+
+Link: https://docs.google.com/document/d/1sF2zsubii_SYJLfZN02UB9FvtH1iLmi9xd-X4wbpbo8
+
 ## General comments from the author
 
-- Ensure that you have Python version 3.10 or above installed on your machine (ideally in a virtual environment). Some of the libraries and code used in the template, as well as on the server end, are only compatible with Python versions 3.10 and above. 
 - Since this project was made in the span of a few weeks, it is very likely things will break from time to time. If things break, you can send an email through the course email or post to ED first.
 - If you would like to see stuff added to the dashboard you can send an email through the course email and prefix the title with FEATURE REQUEST
-- If you REALLY want to go above and beyond, you can make a request for a special Docker template. These will likely be turned down unless there is an exceptional reason to do so, and you will have to be able to debug it yourself to ensure it works.
-- You can ask for the allocation of extra port numbers which will be approved or denied on a case-by-case basis.
 - You can also email regarding any questions relating to the service itself. If you think things can be improved or some better logic can be implemented for certain portions, or even just want to know more about the project then feel free to do so.
 
