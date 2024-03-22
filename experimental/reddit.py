@@ -34,7 +34,7 @@ def find_query_in_comments(query, comment):
 
         results = []
         lower_text = reply.body.lower()
-        lines = lower_text.split('\n')
+        lines = lower_text.split('. ')
         for line in lines:
             if query in line:
                 results.append(line)
@@ -59,14 +59,14 @@ def preprocess_text(text):
     return processed_text
 
 # query issue: 'press coffee' -> 'french press coffee'
-query = "buon caffe"
+query = "modcup"
 query = query.lower()
 search_results = [s for s in reddit.subreddit("coffee").search(query=query)]
 
 query_found = []
 for submission in search_results:
     lower_text = submission.selftext.lower()
-    lines = lower_text.split('\n')
+    lines = '. '.join(lower_text.split('\n')).split('. ')
     for line in lines:
         if query in line:
             query_found.append(line)
