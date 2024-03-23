@@ -49,7 +49,7 @@ def home():
 @app.route("/coffee")
 def coffee_search():
     text = request.args.get("title")
-    return json.dumps(findTop10.findTopTen(text))
+    return json.dumps(basic_search(text))
 
 
 if "DB_NAME" not in os.environ:
