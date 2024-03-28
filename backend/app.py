@@ -41,6 +41,20 @@ def basic_search(query):
     return results[:5]
 
 
+def cosineSearch(query):
+    results = findTop10.findTopTen(query)
+    answers = []
+    for i, x in enumerate(results):
+        answers.append(
+            {
+                "coffee name": x[0]["name"],
+                "description": x[0]["description"],
+                "similarity score": x[1],
+            }
+        )
+    return answers
+
+
 @app.route("/")
 def home():
     return render_template("base.html", title="sample html")

@@ -1,3 +1,18 @@
+import csv
+import pandas as pd
+import nltk
+from nltk.tokenize import word_tokenize
+from nltk.stem import PorterStemmer
+from collections import Counter
+import string
+from sklearn.feature_extraction.text import TfidfVectorizer
+import helpers as analysis
+from numpy import linalg as LA
+import numpy as np
+
+df = pd.read_csv("backend/data/coffee_fix.csv")
+
+
 def findTopTen(user_query):
     """
     Takes a user query and returns an array of (dictionary, integer) pairs
@@ -6,20 +21,6 @@ def findTopTen(user_query):
     Result is returned in order of cosine similarity highest to lowest
     User query must be input as a string
     """
-
-    import csv
-    import pandas as pd
-    import nltk
-    from nltk.tokenize import word_tokenize
-    from nltk.stem import PorterStemmer
-    from collections import Counter
-    import string
-    from sklearn.feature_extraction.text import TfidfVectorizer
-    import helpers as analysis
-    from numpy import linalg as LA
-    import numpy as np
-
-    df = pd.read_csv("backend/data/coffee_fix.csv")
 
     combined_descriptions = df[["desc_1"]].apply(lambda x: " ".join(x.dropna()), axis=1)
     combined_names = df[["name"]].apply(lambda x: " ".join(x.dropna()), axis=1)
@@ -36,9 +37,9 @@ def findTopTen(user_query):
     query = [user_query]
 
     doc_vectors = vectorizer.fit_transform(query + combined_descriptions).toarray()
-
-    index_to_vocab = {i: v for i, v in enumerate(vectorizer.get_feature_names_out())}
-    doc_to_index = {v: i for i, v in enumerate(combined_names)}
+    # don't think we need these, but in the event that we have a very slow query, we can use this
+    # index_to_vocab = {i: v for i, v in enumerate(vectorizer.get_feature_names_out())}
+    # doc_to_index = {v: i for i, v in enumerate(combined_names)}
     index_to_doc_descriptions = {
         i: {"name": v, "description": combined_descriptions[i]}
         for i, v in enumerate(combined_names)
