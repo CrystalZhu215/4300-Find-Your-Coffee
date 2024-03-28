@@ -20,6 +20,7 @@ def findTopTen(user_query):
     import numpy as np
 
     df = pd.read_csv("backend/data/coffee_fix.csv")
+
     combined_descriptions = df[["desc_1"]].apply(lambda x: " ".join(x.dropna()), axis=1)
     combined_names = df[["name"]].apply(lambda x: " ".join(x.dropna()), axis=1)
     combined_locs = df[["origin"]].apply(lambda x: " ".join(x.dropna()), axis=1)
