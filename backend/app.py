@@ -47,7 +47,7 @@ def cosineSearch(query):
     for i, x in enumerate(results):
         answers.append(
             {
-                "coffee name": x[0]["name"],
+                "coffee_name": x[0]["name"],
                 "description": x[0]["description"],
                 "similarity score": x[1],
             }
@@ -63,7 +63,7 @@ def home():
 @app.route("/coffee")
 def coffee_search():
     text = request.args.get("title")
-    return json.dumps(basic_search(text))
+    return json.dumps(cosineSearch(text))
 
 
 if "DB_NAME" not in os.environ:
