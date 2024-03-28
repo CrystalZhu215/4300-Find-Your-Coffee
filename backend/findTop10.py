@@ -1,4 +1,11 @@
 def findTopTen(user_query):
+    """
+    Takes a user query and returns an array of (dictionary, integer) pairs
+    Dictionary is a dictionary of 'name', and 'description' of a coffee, and the integer is the cosine similarity
+
+    Result is returned in order of cosine similarity highest to lowest
+    User query must be input as a string
+    """
 
     import csv
     import pandas as pd
@@ -13,7 +20,6 @@ def findTopTen(user_query):
     import numpy as np
 
     df = pd.read_csv("backend/data/coffee_fix.csv")
-
     combined_descriptions = df[["desc_1"]].apply(lambda x: " ".join(x.dropna()), axis=1)
     combined_names = df[["name"]].apply(lambda x: " ".join(x.dropna()), axis=1)
     combined_locs = df[["origin"]].apply(lambda x: " ".join(x.dropna()), axis=1)
@@ -24,37 +30,30 @@ def findTopTen(user_query):
     ]
 
     vectorizer = TfidfVectorizer()
-    doc_by_vocab = vectorizer.fit_transform(combined_descriptions).toarray()
-
-    index_to_vocab = {i: v for i, v in enumerate(vectorizer.get_feature_names_out())}
-    vocab_to_index = {index_to_vocab[i]: i for i in index_to_vocab}
-    print(vocab_to_index)
-    doc_to_index = {v: i for i, v in enumerate(combined_names)}
 
     # Replace query with the user query here
+    query = [user_query]
 
-    query = user_query
-    query = query.lower()
-    query = query.split(" ")
+    doc_vectors = vectorizer.fit_transform(query + combined_descriptions).toarray()
 
-    queryVector = [0] * doc_by_vocab.shape[1]
+    index_to_vocab = {i: v for i, v in enumerate(vectorizer.get_feature_names_out())}
+    doc_to_index = {v: i for i, v in enumerate(combined_names)}
+    index_to_doc_descriptions = {
+        i: {"name": v, "description": combined_descriptions[i]}
+        for i, v in enumerate(combined_names)
+    }
 
-    for c in query:
-        if c in vocab_to_index:
-            queryVector[vocab_to_index[c]] += 1
+    cosineSims = np.dot(doc_vectors[0], np.transpose(doc_vectors[1:])) / (
+        LA.norm(doc_vectors[0]) * LA.norm(doc_vectors[1:])
+    )
 
-    similarities = []
-    for i in range(len(doc_by_vocab)):
-        similarities.append(
-            (
-                np.dot(queryVector, doc_by_vocab[i])
-                / (LA.norm(queryVector) * LA.norm(doc_by_vocab[i])),
-                i,
-            )
-        )
+    cosineSims = [(x, i) for i, x in enumerate(cosineSims)]
 
-    similarities.sort(reverse=True)
-    topTen = similarities[:10]
+    cosineSims = sorted(cosineSims, key=lambda x: x[0], reverse=True)
 
-    Names = [(combined_names[i], combined_descriptions[i]) for x, i in topTen]
-    return Names
+    topTen = cosineSims[:10]
+    answer = []
+    for sim, index in topTen:
+        answer.append((index_to_doc_descriptions[index], sim))
+
+    return answer
