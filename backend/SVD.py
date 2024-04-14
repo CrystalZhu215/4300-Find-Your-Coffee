@@ -79,3 +79,5 @@ def closest_docs_to_word(word_in, k = 5):
 
 for i, desc, sim in closest_docs_to_word("fruity"):
     print("{}\n {}\n {:.4f}".format(i, desc, sim))
+
+print()
