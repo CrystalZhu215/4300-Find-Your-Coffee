@@ -68,3 +68,14 @@ for i in range(5):
         print("{}:{:.3f}".format(desc, score))
         print()
     print("--------------------------------------------------------\n")
+
+# Word to doc
+
+def closest_docs_to_word(word_in, k = 5):
+    if word_in not in word_to_index: return "Not in vocab."
+    sims = docs_compressed_normed.dot(words_compressed_normed[word_to_index[word_in],:])
+    asort = np.argsort(-sims)[:k+1]
+    return [(i, documents[i],sims[i]) for i in asort[1:]]
+
+for i, desc, sim in closest_docs_to_word("fruity"):
+    print("{}\n {}\n {:.4f}".format(i, desc, sim))
