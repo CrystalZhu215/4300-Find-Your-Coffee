@@ -80,4 +80,18 @@ def closest_docs_to_word(word_in, k = 5):
 for i, desc, sim in closest_docs_to_word("fruity"):
     print("{}\n {}\n {:.4f}".format(i, desc, sim))
 
-print()
+print ("-------------------")
+query = "Chocolaty and nutty with floral notes, creamy mouthfeel and a hint of tartness"
+query_tfidf = vectorizer.transform([query]).toarray()
+query_tfidf.shape
+query_tfidf
+words_compressed.shape
+query_vec = normalize(np.dot(query_tfidf, words_compressed)).squeeze()
+query_vec.shape
+def closest_docs_to_query(query_vec_in, k = 5):
+    sims = docs_compressed_normed.dot(query_vec_in)
+    asort = np.argsort(-sims)[:k+1]
+    return [(i, documents[i],sims[i]) for i in asort[1:]]
+
+for i, desc, sim in closest_docs_to_query(query_vec):
+    print("({}, {}, {:.4f}".format(i, desc, sim))
