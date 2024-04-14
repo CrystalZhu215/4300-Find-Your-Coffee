@@ -62,10 +62,15 @@ body {
     margin-top:200px; 
 }
 
-.episode-title{
-    font-family: 'Kanit', sans-serif;
+.search-button {
+    margin-top: 12px;
+    font-size: 18px;
+    border-radius: 11px;
+    background-color: #b0a19d;
+    padding: 7px 12px;
+    border: none;
 }
 
-.episode-desc{
-    font-family: 'Montserrat', sans-serif;
-}
+button:hover {
+    background-color: #9f8c86;
+  }

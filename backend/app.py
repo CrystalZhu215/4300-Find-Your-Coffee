@@ -45,6 +45,7 @@ def cosineSearch(query):
     results = findTop10.findTopTen(query)
     answers = []
     for i, x in enumerate(results):
+        # print(x[1])
         answers.append(
             {
                 "coffee_name": x[0]["name"],
