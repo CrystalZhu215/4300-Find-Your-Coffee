@@ -13,20 +13,28 @@
             </div>
             <div class="input-box" onclick="sendFocus()">
                 <img src="{{ url_for('static', filename='images/mag.png') }}" />
-                <input placeholder="Type in a description of your favorite coffee flavors, types, preferences " id="filter-text-val" onkeyup="filterText()">
+                <input placeholder="Type in a description of your favorite coffee flavors, types, preferences " id="filter-text-val" >
             </div>
+            <center>
+                <button class="search-button" onClick=filterText()>
+                    Search
+                </button>
+            </center>
+            <div>
         </div>
+        </div>
+        <!-- need answer box or else no results appear -->
         <div id="answer-box">
-
         </div>
     </div>
 
     <script>
 
-        function answerBoxTemplate(coffee_name,description){
+        function answerBoxTemplate(coffee_name,description, sim_score){
             return `<div class=''>
                 <h3 class='episode-title'>${coffee_name}</h3>
                 <p class='episode-rating'>Description: ${description}</p>
+                <p class='similarity-score'>Score: ${sim_score}</p>
             </div>`
         }
 
@@ -42,7 +50,7 @@
             .then((data) => data.forEach(row => {
                 
                 let tempDiv = document.createElement("div")
-                tempDiv.innerHTML = answerBoxTemplate(row.coffee_name,row.description)
+                tempDiv.innerHTML = answerBoxTemplate(row.coffee_name,row.description, row.sim_score)
                 document.getElementById("answer-box").appendChild(tempDiv)
             }));
 
@@ -50,3 +58,4 @@
             
     </script>
 </body>
+
