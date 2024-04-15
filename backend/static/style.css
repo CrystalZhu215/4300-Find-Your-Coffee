@@ -7,7 +7,7 @@ body {
 }
 
 .full-body-container{
-    position: absolute;
+    /* position: absolute; */
     top:0;
     left:0;
     right:0;
@@ -60,17 +60,35 @@ body {
 #answer-box{
     margin: auto;
     width: 50%;
-    margin-top:220px;
 }
-
 
 .border-box{
     outline: 2px solid rgb(139, 69, 19);
+    padding-top: 0px;
     padding: 10px;
     margin: 15px;
     border-radius: 11px;
 }
 
+.fa.fa-thumbs-up  {
+    color: #7B5A2B; 
+    font-size: 24px; 
+    background-color: none;
+  }
+
+.fa.fa-thumbs-down  {
+    color: #BDBDBD; 
+    font-size: 24px; 
+    background-color: none;
+  }
+
+.fa.fa-thumbs-up:hover  {
+    background-color: green;
+  }
+
+.fa.fa-thumbs-down:hover  {
+    background-color: red;
+  }
 
 .search-button {
     margin-top: 12px;
@@ -81,7 +99,7 @@ body {
     border: none;
 }
 
-button:hover {
+.search-button:hover {
     background-color: #9f8c86;
   }
 
