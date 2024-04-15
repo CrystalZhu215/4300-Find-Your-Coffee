@@ -91,5 +91,12 @@ def closest_docs_to_query(query_vec_in, k = 5):
     asort = np.argsort(-sims)[:k+1]
     return [(i, documents[i][4], documents[i][-1],sims[i]) for i in asort[1:]]
 
-for i, name, desc, sim in closest_docs_to_query(query_vec):
+for i, name, desc, sim in closest_docs_to_query(query_vec)[:10]:
     print("({}\n {}\n {}\n {:.4f}".format(i, name, desc, sim))
+
+
+def top_10_from_query(query):
+    query_tfidf = vectorizer.transform([query]).toarray()
+    query_vec = normalize(np.dot(query_tfidf, words_compressed)).squeeze()
+
+    return closest_docs_to_query(query_vec)

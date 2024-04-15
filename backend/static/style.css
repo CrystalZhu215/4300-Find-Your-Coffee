@@ -58,8 +58,9 @@ body {
 }
 
 #answer-box{
-    width: 700px;
-    margin-top:200px; 
+    margin: auto;
+    width: 50%;
+    margin-top:220px;
 }
 
 .search-button {
@@ -74,3 +75,11 @@ body {
 button:hover {
     background-color: #9f8c86;
   }
+
+.coffee-title{
+    font-family: 'Kanit', sans-serif;
+}
+
+.coffee-desc{
+    font-family: 'Montserrat', sans-serif;
+}

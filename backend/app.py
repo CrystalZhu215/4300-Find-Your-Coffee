@@ -6,6 +6,7 @@ from helpers.MySQLDatabaseHandler import MySQLDatabaseHandler
 import pandas as pd
 import csv
 import findTop10
+import SVD
 
 # ROOT_PATH for linking with all your files.
 # Feel free to use a config.py or settings.py with a global export variable
@@ -55,6 +56,22 @@ def cosineSearch(query):
         )
     return answers
 
+def SVDSearch(query):
+    results = SVD.top_10_from_query(query)
+    answers = []
+    for i, name, desc, sim in results:
+        answers.append(
+            {
+                "coffee_name": name,
+                "description": desc,
+                "similarity score": sim,
+            }
+        )
+    return answers
+
+    for i, name, desc, sim in closest_docs_to_query(query_vec):
+        print("({}\n {}\n {}\n {:.4f}".format(i, name, desc, sim))
+
 
 @app.route("/")
 def home():
@@ -65,6 +82,11 @@ def home():
 def coffee_search():
     text = request.args.get("title")
     return json.dumps(cosineSearch(text))
+
+@app.route("/coffee-SVD")
+def coffee_SVD_search():
+    text = request.args.get("title")
+    return json.dumps(SVDSearch(text))
 
 
 if "DB_NAME" not in os.environ:
