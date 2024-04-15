@@ -63,6 +63,15 @@ body {
     margin-top:220px;
 }
 
+
+.border-box{
+    outline: 2px solid rgb(139, 69, 19);
+    padding: 10px;
+    margin: 15px;
+    border-radius: 11px;
+}
+
+
 .search-button {
     margin-top: 12px;
     font-size: 18px;
