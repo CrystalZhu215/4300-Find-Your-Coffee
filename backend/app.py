@@ -104,7 +104,7 @@ def coffee_SVD_search():
             coffee["reddit score"] = avg_pos - avg_neg
         else:
             coffee["reddit score"] = 0
-    answers = sorted(answers, key=(lambda x: x["reddit score"]))
+    answers = sorted(answers, key=(lambda x: x["reddit score"]), reverse=True)
     return json.dumps(answers)
 
 
