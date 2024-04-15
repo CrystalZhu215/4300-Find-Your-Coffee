@@ -548,33 +548,33 @@ def preprocess_text(text):
     return processed_text
 
 
-# query issue: 'press coffee' -> 'french press coffee'
-query = "modcup"
-query = query.lower()
-search_results = [s for s in reddit.subreddit("coffee").search(query=query)]
+# # query issue: 'press coffee' -> 'french press coffee'
+# query = "modcup"
+# query = query.lower()
+# search_results = [s for s in reddit.subreddit("coffee").search(query=query)]
 
-# print(search_results)
-query_found = []
-for submission in search_results:
-    lower_text = submission.selftext.lower()
-    lines = ". ".join(lower_text.split("\n")).split(". ")
-    for line in lines:
-        if query in line:
-            query_found.append(line)
+# # print(search_results)
+# query_found = []
+# for submission in search_results:
+#     lower_text = submission.selftext.lower()
+#     lines = ". ".join(lower_text.split("\n")).split(". ")
+#     for line in lines:
+#         if query in line:
+#             query_found.append(line)
 
-    submission.comments.replace_more(limit=None)
-    for c in submission.comments:
-        query_found += find_query_in_comments(query, c)
+#     submission.comments.replace_more(limit=None)
+#     for c in submission.comments:
+#         query_found += find_query_in_comments(query, c)
 
 # for i, result in enumerate(query_found):
 #     print(str(i + 1) + ")", result)
 
-analyzer = SentimentIntensityAnalyzer()
+# analyzer = SentimentIntensityAnalyzer()
 
-for text in query_found:
-    processed_text = preprocess_text(text)
-    sentiments = analyzer.polarity_scores(processed_text)
-    print(sentiments)
+# for text in query_found:
+#     processed_text = preprocess_text(text)
+#     sentiments = analyzer.polarity_scores(processed_text)
+#     print(sentiments)
 
 coffeeSub = reddit.subreddit("coffee")
 
@@ -583,7 +583,7 @@ def buildJson():
     allJson = {}
     for i, x in enumerate(roasters):
         query = x.lower()
-        results = [s for s in coffeeSub.search(query=query)]
+        search_results = [s for s in coffeeSub.search(query=query)]
         query_found = []
         for submission in search_results:
             lower_text = submission.selftext.lower()
