@@ -4,7 +4,7 @@ import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.preprocessing import normalize
 from scipy.sparse.linalg import svds
-import matplotlib.pyplot as plt
+
 
 df = pd.read_csv("data/coffee_fix.csv")
 df['desc_all'] = df['desc_1'] + '\n' + df['desc_2'] + '\n' + df['desc_3']
