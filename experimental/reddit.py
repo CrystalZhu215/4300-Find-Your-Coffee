@@ -16,8 +16,8 @@ import pprint
 # nltk.download('all')
 
 reddit = praw.Reddit(
-    client_id="your client id",
-    client_secret="your client secret",
+    client_id="g6Sg4kfXefAB0AYe-wIeLQ",
+    client_secret="VTAIX6q8yga9wdNKmFHUbgSufTkR4g",
     user_agent="macos:findyourcoffee:v1.0.0 (by u/worm-dealer)"
 )
 print(reddit.read_only)
