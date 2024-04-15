@@ -36,6 +36,7 @@ td_matrix_np = normalize(td_matrix_np)
 
 # For words
 
+'''
 word = 'citrus'
 print("Query:", word)
 print()
@@ -45,6 +46,7 @@ try:
 except:
     print("word not found")
 print()
+'''
 
 # For docs
 
@@ -56,6 +58,7 @@ def closest_docs(doc_index_in, doc_repr_in, k = 5):
     # Index 4 is name
     return [(documents[i][4], documents[i][-1], sims[i]) for i in asort[1:]]
 
+'''
 for i in range(5):
     print("INPUT NAME: "+documents[i][4])
     print("INPUT DESCRIPTION: "+documents[i][-1])
@@ -66,6 +69,7 @@ for i in range(5):
         print("{}: {:.3f} \n {}".format(name, score, desc))
         print()
     print("--------------------------------------------------------\n")
+'''
 
 # Word to doc
 
@@ -75,10 +79,12 @@ def closest_docs_to_word(word_in, k = 5):
     asort = np.argsort(-sims)[:k+1]
     return [(i, documents[i][4], documents[i][-1], sims[i]) for i in asort[1:]]
 
+'''
 for i, name, desc, sim in closest_docs_to_word("fruity"):
     print("{}\n {}\n {}\n {:.4f}".format(i, name, desc, sim))
 
 print ("-------------------")
+'''
 
 # Query to doc
 
@@ -89,11 +95,12 @@ query_vec = normalize(np.dot(query_tfidf, words_compressed)).squeeze()
 def closest_docs_to_query(query_vec_in, k = 5):
     sims = docs_compressed_normed.dot(query_vec_in)
     asort = np.argsort(-sims)[:k+1]
-    return [(i, documents[i][4], documents[i][-1],sims[i]) for i in asort[1:]]
+    return [(i, documents[i][4], documents[i][3], documents[i][-1], sims[i]) for i in asort[1:]]
 
+'''
 for i, name, desc, sim in closest_docs_to_query(query_vec)[:10]:
     print("({}\n {}\n {}\n {:.4f}".format(i, name, desc, sim))
-
+'''
 
 def top_10_from_query(query):
     query_tfidf = vectorizer.transform([query]).toarray()

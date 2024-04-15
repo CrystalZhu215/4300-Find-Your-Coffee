@@ -8,6 +8,8 @@ import csv
 import findTop10
 import SVD
 
+# RUN: flask run --host=0.0.0.0 --port=5000
+
 # ROOT_PATH for linking with all your files.
 # Feel free to use a config.py or settings.py with a global export variable
 os.environ["ROOT_PATH"] = os.path.abspath(os.path.join("..", os.curdir))
@@ -33,6 +35,8 @@ with open("data/coffee_fix.csv", "r") as csvfile:
             description1 = r["desc_1"]
             name_to_desc1[name_of_blend] = description1
 
+with open('sentiments.json') as f:
+    sentiments = json.load(f)
 
 def basic_search(query):
     results = []
@@ -59,10 +63,11 @@ def cosineSearch(query):
 def SVDSearch(query):
     results = SVD.top_10_from_query(query)
     answers = []
-    for i, name, desc, sim in results:
+    for i, name, roaster, desc, sim in results:
         answers.append(
             {
                 "coffee_name": name,
+                "roaster": roaster,
                 "description": desc,
                 "similarity score": sim,
             }
@@ -77,7 +82,6 @@ def SVDSearch(query):
 def home():
     return render_template("base.html", title="sample html")
 
-
 @app.route("/coffee")
 def coffee_search():
     text = request.args.get("title")
@@ -86,7 +90,22 @@ def coffee_search():
 @app.route("/coffee-SVD")
 def coffee_SVD_search():
     text = request.args.get("title")
-    return json.dumps(SVDSearch(text))
+    answers = SVDSearch(text)
+    for coffee in answers:
+        if coffee["roaster"] in sentiments:
+            avg_pos = 0
+            avg_neg = 0
+            comments = sentiments[coffee["roaster"]]
+            for comment in comments:
+                avg_pos += comment[1]["pos"]
+                avg_neg += comment[1]["neg"]
+            avg_pos /= len(comments)
+            avg_neg /= len(comments)
+            coffee["reddit score"] = avg_pos - avg_neg
+        else:
+            coffee["reddit score"] = 0
+    answers = sorted(answers, key=(lambda x: x["reddit score"]))
+    return json.dumps(answers)
 
 
 if "DB_NAME" not in os.environ:
