@@ -589,8 +589,8 @@ coffeeSub = reddit.subreddit("coffee")
 
 def buildJson():
     allJson = {}
-    for i, x in enumerate(roasters):
-        query = x.lower()
+    for query in roasters[:10]:
+        query = query.lower()
         search_results = [s for s in coffeeSub.search(query=query)]
         search_results = search_results[:10]
         print(search_results)
@@ -607,13 +607,13 @@ def buildJson():
                 query_found += find_query_in_comments(query, c)
 
         analyzer = SentimentIntensityAnalyzer()
-        stored = collections.defaultdict(list)
+        stored = []
         for text in query_found:
             processed_text = preprocess_text(text)
             sentiments = analyzer.polarity_scores(processed_text)
-            stored[text].append([processed_text, sentiments])
+            stored.append([processed_text, sentiments])
         print(stored)
-        allJson[x] = stored
+        allJson[query] = stored
     with open("sentiments.json", "w") as outfile:
         json.dump(allJson, outfile)
 
