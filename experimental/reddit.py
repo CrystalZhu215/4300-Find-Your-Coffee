@@ -1,6 +1,7 @@
 import praw
 from praw.models import MoreComments
 import json
+import collections
 
 import nltk
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
@@ -14,7 +15,7 @@ from sklearn.metrics import classification_report
 import pprint
 
 # This needs to be run the first time you run this script ever
-# nltk.download('all')
+# nltk.download("all")
 roasters = [
     "Java Blend Coffee Roasters",
     "Blues Brew Coffee",
@@ -500,10 +501,16 @@ roasters = [
 ]
 
 
+# reddit = praw.Reddit(
+#     # client_id="your client id",
+#     # client_secret="your client secret",
+#     # user_agent="macos:findyourcoffee:v1.0.0 (by u/worm-dealer)",
+# )
+
 reddit = praw.Reddit(
-    client_id="your client id",
-    client_secret="your client secret",
-    user_agent="macos:findyourcoffee:v1.0.0 (by u/worm-dealer)",
+    client_id="2Yn8h9HVuwfaGSTxTRRQXg",
+    client_secret="Vcj6sPL-Raz2jx7iwzci42KNRPxRSw",
+    user_agent="http://localhost:8080",
 )
 print(reddit.read_only)
 
@@ -549,9 +556,10 @@ def preprocess_text(text):
 
 
 # # query issue: 'press coffee' -> 'french press coffee'
-# query = "modcup"
+# query = "Blue Bottle"
 # query = query.lower()
 # search_results = [s for s in reddit.subreddit("coffee").search(query=query)]
+# search_results = search_results[:10]
 
 # # print(search_results)
 # query_found = []
@@ -581,9 +589,11 @@ coffeeSub = reddit.subreddit("coffee")
 
 def buildJson():
     allJson = {}
-    for i, x in enumerate(roasters):
-        query = x.lower()
+    for query in roasters[:10]:
+        query = query.lower()
         search_results = [s for s in coffeeSub.search(query=query)]
+        search_results = search_results[:10]
+        print(search_results)
         query_found = []
         for submission in search_results:
             lower_text = submission.selftext.lower()
@@ -597,12 +607,13 @@ def buildJson():
                 query_found += find_query_in_comments(query, c)
 
         analyzer = SentimentIntensityAnalyzer()
-        stored = {}
+        stored = []
         for text in query_found:
             processed_text = preprocess_text(text)
             sentiments = analyzer.polarity_scores(processed_text)
-            stored[text] = [processed_text, sentiments]
-        allJson[x] = stored
+            stored.append([processed_text, sentiments])
+        print(stored)
+        allJson[query] = stored
     with open("sentiments.json", "w") as outfile:
         json.dump(allJson, outfile)
 
