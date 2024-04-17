@@ -12,7 +12,6 @@ import numpy as np
 
 df = pd.read_csv("data/coffee_fix.csv")
 
-
 def findTopTen(user_query):
     """
     Takes a user query and returns an array of (dictionary, integer) pairs

@@ -31,10 +31,11 @@
 
     <script>
 
-        function answerBoxTemplate(coffee_name, description){
+        function answerBoxTemplate(coffee_name, description, sim_score){
             return  `<div class='border-box'>
                     <h3 class='coffee-title'>${coffee_name}</h3>
                     <p class='coffee-desc'>Description: ${description}</p>
+                    <p>Similarity score: ${sim_score}</p>
                     <button class="fa fa-thumbs-up"></button>
                     <button class="fa fa-thumbs-down"></button>
             </div> `
@@ -51,7 +52,7 @@
             .then((response) => response.json())
             .then((data) => data.forEach(row => {
                 let tempDiv = document.createElement("div")
-                tempDiv.innerHTML = answerBoxTemplate(row.coffee_name,row.description, row.sim_score)
+                tempDiv.innerHTML = answerBoxTemplate(row.coffee_name, row.description, row.sim_score)
                 document.getElementById("answer-box").appendChild(tempDiv)
             }));
 
