@@ -69,13 +69,10 @@ def SVDSearch(query):
                 "coffee_name": name,
                 "roaster": roaster,
                 "description": desc,
-                "similarity score": sim,
+                "sim_score": sim,
             }
         )
     return answers
-
-    for i, name, desc, sim in closest_docs_to_query(query_vec):
-        print("({}\n {}\n {}\n {:.4f}".format(i, name, desc, sim))
 
 
 @app.route("/")
@@ -109,4 +106,4 @@ def coffee_SVD_search():
 
 
 if "DB_NAME" not in os.environ:
-    app.run(debug=True, host="0.0.0.0", port=5000)
+    app.run(debug=True, host="0.0.0.0", port=8000)
