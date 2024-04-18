@@ -61,7 +61,7 @@ def cosineSearch(query):
     return answers
 
 def SVDSearch(query):
-    results = SVD.top_10_from_query(query)
+    results = SVD.all_docs_to_query(query)
     answers = []
     for i, name, roaster, desc, sim in results:
         answers.append(
@@ -89,7 +89,6 @@ def coffee_SVD_search():
     text = request.args.get("title")
     answers = SVDSearch(text)
     for coffee in answers:
-        print(coffee["sim_score"])
         if coffee["roaster"] in sentiments:
             avg_pos = 0
             avg_neg = 0

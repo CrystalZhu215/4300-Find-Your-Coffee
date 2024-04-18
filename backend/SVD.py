@@ -92,9 +92,9 @@ query = "Chocolaty and nutty with floral notes, creamy mouthfeel and a hint of t
 query_tfidf = vectorizer.transform([query]).toarray()
 query_vec = normalize(np.dot(query_tfidf, words_compressed)).squeeze()
 
-def closest_docs_to_query(query_vec_in, k = 10):
+def closest_docs_to_query(query_vec_in):
     sims = docs_compressed_normed.dot(query_vec_in)
-    asort = np.argsort(-sims)[:k+1]
+    asort = np.argsort(-sims)
     return [(i, documents[i][4], documents[i][3], documents[i][-1], sims[i]) for i in asort[1:]]
 
 '''
@@ -102,7 +102,7 @@ for i, name, desc, sim in closest_docs_to_query(query_vec)[:10]:
     print("({}\n {}\n {}\n {:.4f}".format(i, name, desc, sim))
 '''
 
-def top_10_from_query(query):
+def all_docs_to_query(query):
     query_tfidf = vectorizer.transform([query]).toarray()
     query_vec = normalize(np.dot(query_tfidf, words_compressed)).squeeze()
 
