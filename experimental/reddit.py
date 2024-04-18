@@ -508,8 +508,8 @@ roasters = [
 # )
 
 reddit = praw.Reddit(
-    client_id="2Yn8h9HVuwfaGSTxTRRQXg",
-    client_secret="Vcj6sPL-Raz2jx7iwzci42KNRPxRSw",
+    client_id="g6Sg4kfXefAB0AYe-wIeLQ",
+    client_secret="VTAIX6q8yga9wdNKmFHUbgSufTkR4g",
     user_agent="http://localhost:8080",
 )
 print(reddit.read_only)
@@ -589,7 +589,7 @@ coffeeSub = reddit.subreddit("coffee")
 
 def buildJson():
     allJson = {}
-    for query in roasters[:10]:
+    for query in roasters[486:]: # crystal do 226 onwards
         query = query.lower()
         search_results = [s for s in coffeeSub.search(query=query)]
         search_results = search_results[:10]
@@ -614,8 +614,7 @@ def buildJson():
             stored.append([processed_text, sentiments])
         print(stored)
         allJson[query] = stored
-    with open("sentiments.json", "w") as outfile:
-        json.dump(allJson, outfile)
-
+    with open("sentiments_temp.json", 'w') as outfile:
+        json.dump(allJson, outfile, indent=2)
 
 buildJson()
