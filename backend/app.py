@@ -89,7 +89,7 @@ def coffee_SVD_search():
     text = request.args.get("title")
     answers = SVDSearch(text)
     for coffee in answers:
-        print(coffee["similarity score"])
+        print(coffee["sim_score"])
         if coffee["roaster"] in sentiments:
             avg_pos = 0
             avg_neg = 0
