@@ -1,0 +1,138 @@
+"san francisco bay coffee": [],
+"pop coffee works": [],
+"allegro coffee": [
+  [
+    "however , last two time 've tried allegro coffee roasted local whole food , 've blown away",
+    {
+      "neg": 0.0,
+      "neu": 1.0,
+      "pos": 0.0,
+      "compound": 0.0
+    }
+  ],
+  [
+    "slightly topic , third 3rd weekend steampunk brewer notable absence allegro coffee stand",
+    {
+      "neg": 0.0,
+      "neu": 1.0,
+      "pos": 0.0,
+      "compound": 0.0
+    }
+  ],
+  [
+    "\u2019 still pretty new game , light roast recommendation welcomed ! ! ! currently \u2019 loving allegro coffee roaster .",
+    {
+      "neg": 0.0,
+      "neu": 0.491,
+      "pos": 0.509,
+      "compound": 0.8854
+    }
+  ],
+  [
+    "got coffee brand said good ( allegro coffee roaster ) roast date 5 day ago ( variety `` ethiopia wotona bultuma espresso '' )",
+    {
+      "neg": 0.0,
+      "neu": 0.861,
+      "pos": 0.139,
+      "compound": 0.4404
+    }
+  ]
+],
+"maxim coffee": [],
+"fresh roasted coffee": [
+  [
+    "long 're enjoying 's nothing wrong brewing super-fresh roasted coffee",
+    {
+      "neg": 0.0,
+      "neu": 0.573,
+      "pos": 0.427,
+      "compound": 0.7144
+    }
+  ],
+  [
+    "try year round small batch single origin fair trade fresh roasted coffee",
+    {
+      "neg": 0.0,
+      "neu": 0.685,
+      "pos": 0.315,
+      "compound": 0.5574
+    }
+  ],
+  [
+    "used super skeptical waiting week roasted coffee tried home fresh roasted coffee . may also depend brew method",
+    {
+      "neg": 0.102,
+      "neu": 0.622,
+      "pos": 0.276,
+      "compound": 0.5994
+    }
+  ]
+],
+"black coffee in black jar": [],
+"peet's coffee": [
+  [
+    "retrieved 2021-06-26 . [ 36 ] '' family owns krispy kreme , panera , peet 's coffee acknowledges nazi past ''",
+    {
+      "neg": 0.0,
+      "neu": 1.0,
+      "pos": 0.0,
+      "compound": 0.0
+    }
+  ],
+  [
+    "hi , wanted order sumatra peet 's coffee online , shipping singapore $ 35 much .",
+    {
+      "neg": 0.0,
+      "neu": 1.0,
+      "pos": 0.0,
+      "compound": 0.0
+    }
+  ],
+  [
+    "today ordered coffee today thought much miss taste original peet 's coffee",
+    {
+      "neg": 0.115,
+      "neu": 0.719,
+      "pos": 0.165,
+      "compound": 0.1779
+    }
+  ],
+  [
+    "recently started working peet 's coffee , prior experience serious coffee shop ( experience waiter , high quality )",
+    {
+      "neg": 0.085,
+      "neu": 0.915,
+      "pos": 0.0,
+      "compound": -0.0772
+    }
+  ],
+  [
+    "know started selling peet 's coffee , instead roasting , n't know copied technique",
+    {
+      "neg": 0.0,
+      "neu": 1.0,
+      "pos": 0.0,
+      "compound": 0.0
+    }
+  ]
+],
+"wild goose coffee roasters": [],
+"the formosa coffee": [],
+"dr. young cafe": [],
+"turnstile coffee roasters": [],
+"rnd & red rooster coffee roaster": [],
+"ninetys roastery": [],
+"poppets coffee": [],
+"detour coffee roasters": [],
+"ho soo tsai": [],
+"finca las nieves": [],
+"ka'u specialty coffee": [],
+"flower child coffee": [],
+"jackrabbit java": [],
+"indaba coffee roasters": [],
+"the curve coffee roasting": [],
+"oak & bond coffee company": [],
+"three keys coffee": [],
+"kona farm direct": [],
+"david's nose": []
+}

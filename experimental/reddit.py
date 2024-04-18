@@ -589,7 +589,7 @@ coffeeSub = reddit.subreddit("coffee")
 
 def buildJson():
     allJson = {}
-    for query in roasters[486:]: # crystal do 226 onwards
+    for query in roasters[200:226]:  # crystal do 226 onwards
         query = query.lower()
         search_results = [s for s in coffeeSub.search(query=query)]
         search_results = search_results[:10]
@@ -614,7 +614,8 @@ def buildJson():
             stored.append([processed_text, sentiments])
         print(stored)
         allJson[query] = stored
-    with open("sentiments_temp.json", 'w') as outfile:
+    with open("sentiments_temp.json", "w") as outfile:
         json.dump(allJson, outfile, indent=2)
+
 
 buildJson()
