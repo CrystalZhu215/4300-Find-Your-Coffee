@@ -72,11 +72,12 @@
         });
     });
 
-    function answerBoxTemplate(coffee_name, description, sim_score) {
+    function answerBoxTemplate(coffee_name, description, sim_score, social_score) {
       return `<div class='border-box'>
                     <h3 class='coffee-title'>${coffee_name}</h3>
                     <p class='coffee-desc'>Description: ${description}</p>
                     <p>Similarity score: ${sim_score}</p>
+                    <p>Reddit score: ${social_score}</p>
                     <button class="fa fa-thumbs-up"></button>
                     <button class="fa fa-thumbs-down"></button>
             </div> `;
@@ -122,7 +123,8 @@
               tempDiv.innerHTML = answerBoxTemplate(
                 row.coffee_name,
                 row.description,
-                row.sim_score
+                row.sim_score,
+                row.social_score
               );
               document.getElementById("answer-box").appendChild(tempDiv);
             }
