@@ -65,11 +65,6 @@ def findTopTen(user_query, origin, roast, price):
     answer = []
     for sim, index in topTen:
         cur = index_to_doc_descriptions[index]
-        if (
-            origin in cur["origin"]
-            and price > float(cur["price"])
-            and roast in cur["roast"]
-        ):
-            answer.append((cur, sim))
+        answer.append((cur, sim))
 
     return answer
