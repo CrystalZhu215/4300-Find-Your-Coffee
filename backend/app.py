@@ -49,8 +49,14 @@ df['desc_all'] = df['desc_all'].astype(str)
 documents = df.values.tolist()
 
 # Get relevance
-relevant = [coffee['coffee_name'] for coffee in documents]
+relevant = df['name'].tolist()
 irrelevant = []
+
+# Get name to index
+combined_names = df[["name"]].apply(lambda x: " ".join(x.dropna()), axis=1)
+coffee_name_to_index = {
+    name: i for i, name in enumerate(combined_names)
+}
 
 def basic_search(query):
     results = []
@@ -75,7 +81,7 @@ def cosineSearch(query):
     return answers
 
 def SVDSearch(query):
-    results = SVD.all_docs_to_query(query)
+    results = SVD.perform_SVD(documents, query, relevant, irrelevant, coffee_name_to_index)
     answers = []
     for i, name, roaster, desc, sim in results:
         answers.append(
@@ -135,9 +141,9 @@ def coffee_search():
 
 @app.route("/coffee-SVD")
 def coffee_SVD_search():
-    text = request.args.get("title")
+    query = request.args.get("title")
 
-    answers = rank(SVDSearch(text))
+    answers = rank(SVDSearch(query))
     
     return json.dumps(answers)
 
@@ -154,9 +160,9 @@ def feedback_submit():
         relevant.append(coffee_name)
         irrelevant.remove(coffee_name)
 
-    # call search
+    answers = rank(SVDSearch(query))
 
-    return jsonify("success"),200
+    return json.dumps(answers)
 
 if "DB_NAME" not in os.environ:
     app.run(debug=True, host="0.0.0.0", port=8000)

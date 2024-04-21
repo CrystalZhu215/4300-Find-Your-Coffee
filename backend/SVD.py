@@ -4,11 +4,13 @@ import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.preprocessing import normalize
 from scipy.sparse.linalg import svds
+from rocchio import rocchio
 
-def perform_SVD(documents, query):
+def perform_SVD(documents, query, relevant, irrelevant, coffee_name_to_index):
 
     vectorizer = TfidfVectorizer(stop_words = 'english', min_df = 70, max_df = 0.7)
     td_matrix = vectorizer.fit_transform([x[-1] for x in documents]) # combined description is last column in df
+    query = rocchio(query, relevant, irrelevant, td_matrix, coffee_name_to_index)
 
     docs_compressed, s, words_compressed = svds(td_matrix, k=20)
     words_compressed = words_compressed.transpose()

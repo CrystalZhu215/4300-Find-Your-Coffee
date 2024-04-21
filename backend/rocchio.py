@@ -2,7 +2,7 @@
 from sklearn.feature_extraction.text import TfidfVectorizer
 import numpy as np
 
-def rocchio(query, relevant,irrelevant, input_doc_matrix, coffee_name_to_index,a=.3, b=.3, c=.8, clip = True):
+def rocchio(query, relevant, irrelevant, input_doc_matrix, coffee_name_to_index, a=.3, b=.3, c=.8, clip = True):
  
   mov_idx = coffee_name_to_index[query]
   q = input_doc_matrix[mov_idx]
@@ -30,6 +30,9 @@ def rocchio(query, relevant,irrelevant, input_doc_matrix, coffee_name_to_index,a
   
   q_updated = pt1 + pt2 - pt3
 
-  return np.clip(q_updated, 0, None)
+  if clip:
+    return np.clip(q_updated, 0, None)
+  else:
+    return q_updated
 
 
