@@ -2,33 +2,41 @@
 from sklearn.feature_extraction.text import TfidfVectorizer
 import numpy as np
 
-def rocchio(query, relevant, irrelevant, input_doc_matrix, coffee_name_to_index, a=.3, b=.3, c=.8, clip = True):
- 
-  mov_idx = coffee_name_to_index[query]
-  q = input_doc_matrix[mov_idx]
+def rocchio(query_vec, relevant, irrelevant, input_doc_matrix, coffee_name_to_index, a=.3, b=.3, c=.8, clip = True):
 
-  pt1 = a * q 
+  print("query vector", query_vec.shape)
+  print("input doc matrix", type(input_doc_matrix))
 
-  rel_vec = np.zeros(len(q))
-  irrel_vec = np.zeros(len(q))
+  pt1 = a * query_vec
 
-  for rel_mov in set(relevant):
-    rel_vec  += input_doc_matrix[ coffee_name_to_index[rel_mov]]
+  rel_vec = np.zeros(len(query_vec))
+  irrel_vec = np.zeros(len(query_vec))
+
+  for rel_coffee in set(relevant):
+    rel_vec += input_doc_matrix[coffee_name_to_index[rel_coffee]]
+
+  print("rel vec", rel_vec.shape)
   
   if len(relevant)==0:
     pt2 = 0
   else:
     pt2 = b *  rel_vec * (1/len(relevant)) 
 
-  for irrel_mov in set(irrelevant):
-    irrel_vec += input_doc_matrix[coffee_name_to_index[irrel_mov]]
+  for irrel_coffee in set(irrelevant):
+    irrel_vec += input_doc_matrix[coffee_name_to_index[irrel_coffee]]
+
+
+  print("irrel vec", irrel_vec.shape)
 
   if len(irrelevant)==0:
     pt3 = 0
   else:
     pt3 =c *  irrel_vec * (1/len(irrelevant))
   
+  print("parts", (pt1 + pt2).shape)
   q_updated = pt1 + pt2 - pt3
+
+  print("q updated", q_updated.shape)
 
   if clip:
     return np.clip(q_updated, 0, None)

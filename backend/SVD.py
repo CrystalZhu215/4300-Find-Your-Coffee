@@ -10,18 +10,21 @@ def perform_SVD(documents, query, relevant, irrelevant, coffee_name_to_index):
 
     vectorizer = TfidfVectorizer(stop_words = 'english', min_df = 70, max_df = 0.7)
     td_matrix = vectorizer.fit_transform([x[-1] for x in documents]) # combined description is last column in df
-    query = rocchio(query, relevant, irrelevant, td_matrix, coffee_name_to_index)
-
+    print("td matrix", td_matrix.shape)
+    print("relevant", len(relevant))
+    
     docs_compressed, s, words_compressed = svds(td_matrix, k=20)
     words_compressed = words_compressed.transpose()
     docs_compressed_normed = normalize(docs_compressed)
+
+    query_tfidf = vectorizer.transform([query]).toarray()
+    query_tfidf_new = rocchio(query_tfidf.flatten(), relevant, irrelevant, td_matrix.toarray(), coffee_name_to_index)
+    query_vec = normalize(np.dot(query_tfidf_new.reshape(1, -1), words_compressed)).squeeze().T
+    print("FINAL query vector", query_vec.shape)
 
     def closest_docs_to_query(query_vec_in):
         sims = docs_compressed_normed.dot(query_vec_in)
         asort = np.argsort(-sims)
         return [(i, documents[i][4], documents[i][3], documents[i][-1], sims[i]) for i in asort[1:]]
-
-    query_tfidf = vectorizer.transform([query]).toarray()
-    query_vec = normalize(np.dot(query_tfidf, words_compressed)).squeeze()
 
     return closest_docs_to_query(query_vec)
