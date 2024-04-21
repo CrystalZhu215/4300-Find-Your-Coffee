@@ -78,8 +78,8 @@
                     <p class='coffee-desc'>Description: ${description}</p>
                     <p>Similarity score: ${sim_score}</p>
                     <p>Reddit score: ${social_score}</p>
-                    <button class="fa fa-thumbs-up" onclick="thumbsFeedback(true)"></button>
-                    <button class="fa fa-thumbs-down" onclick="thumbsFeedback(false)"></button>
+                    <button class="fa fa-thumbs-up" onclick="thumbsFeedback(true, coffee_name)"></button>
+                    <button class="fa fa-thumbs-down" onclick="thumbsFeedback(false, coffee_name)"></button>
             </div> `;
     }
 
@@ -87,12 +87,13 @@
       document.getElementById("filter-text-val").focus();
     }
 
-    function thumbsFeedback(isRelevant) {
+    function thumbsFeedback(isRelevant, coffee_name) {
       document.getElementById("answer-box").innerHTML = "";
       fetch("/rocchio", {
             method: 'POST',
             body: new URLSearchParams({
                 title: document.getElementById("filter-text-val").value,
+                coffee_name: coffee_name,
                 relevant: isRelevant.toString()
             })
         })
