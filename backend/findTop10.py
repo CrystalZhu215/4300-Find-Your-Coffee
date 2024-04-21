@@ -12,7 +12,8 @@ import numpy as np
 
 df = pd.read_csv("data/data_cleaning_coffee.csv")
 
-def findTopTen(user_query):
+
+def findTopTen(user_query, origin, roast, price):
     """
     Takes a user query and returns an array of (dictionary, integer) pairs
     Dictionary is a dictionary of 'name', and 'description' of a coffee, and the integer is the cosine similarity
@@ -23,11 +24,13 @@ def findTopTen(user_query):
 
     combined_descriptions = df[["desc_1"]].apply(lambda x: " ".join(x.dropna()), axis=1)
     combined_names = df[["name"]].apply(lambda x: " ".join(x.dropna()), axis=1)
-    combined_locs = df[["origin"]].apply(lambda x: " ".join(x.dropna()), axis=1)
+    combined_origins = df[["origin"]].apply(lambda x: " ".join(x.dropna()), axis=1)
+    combined_roasts = df[["roast"]].apply(lambda x: " ".join(x.dropna()), axis=1)
+    combined_price = df[["price"]].apply(lambda x: " ".join(x.dropna()), axis=1)
 
     combined_descriptions = [x for x in combined_descriptions]
     combined_names = [
-        x + " from " + combined_locs[i] for i, x in enumerate(combined_names)
+        x + " from " + combined_origins[i] for i, x in enumerate(combined_names)
     ]
 
     vectorizer = TfidfVectorizer()
@@ -40,7 +43,13 @@ def findTopTen(user_query):
     # index_to_vocab = {i: v for i, v in enumerate(vectorizer.get_feature_names_out())}
     # doc_to_index = {v: i for i, v in enumerate(combined_names)}
     index_to_doc_descriptions = {
-        i: {"name": v, "description": combined_descriptions[i]}
+        i: {
+            "name": v,
+            "description": combined_descriptions[i],
+            "roast": combined_roasts[i],
+            "origin": combined_origins[i],
+            "price": combined_price[i],
+        }
         for i, v in enumerate(combined_names)
     }
 
@@ -55,6 +64,12 @@ def findTopTen(user_query):
     topTen = cosineSims[:10]
     answer = []
     for sim, index in topTen:
-        answer.append((index_to_doc_descriptions[index], sim))
+        cur = index_to_doc_descriptions[index]
+        if (
+            origin in cur["origin"]
+            and price > float(cur["price"])
+            and roast in cur["roast"]
+        ):
+            answer.append((cur, sim))
 
     return answer
