@@ -104,7 +104,7 @@
         body: JSON.stringify({
           title: document.getElementById("filter-text-val").value,
           coffee_name: coffee_name,
-          relevant: isRelevant.toString(),
+          relevant: isRelevant,
         }),
       })
         .then((response) => response.json())

@@ -49,8 +49,8 @@ df['desc_all'] = df['desc_all'].astype(str)
 documents = df.values.tolist()
 
 # Get relevance
-relevant = df['name'].tolist()
-irrelevant = []
+query_to_relevant = {}
+query_to_irrelevant = {}
 
 # Get name to index
 combined_names = df[["name"]].apply(lambda x: " ".join(x.dropna()), axis=1)
@@ -81,9 +81,16 @@ def cosineSearch(query):
     return answers
 
 def SVDSearch(query):
+    if query not in query_to_relevant.keys():
+        query_to_relevant[query] = df['name'].tolist()
+        query_to_irrelevant[query] = []
+
+    relevant = query_to_relevant[query]
+    irrelevant = query_to_irrelevant[query]
+
     results = SVD.perform_SVD(documents, query, relevant, irrelevant, coffee_name_to_index)
     answers = []
-    for i, name, roaster, desc, sim in results:
+    for _, name, roaster, desc, sim in results:
         answers.append(
             {
                 "coffee_name": name,
@@ -157,12 +164,16 @@ def feedback_submit():
 
     print("data is here: ", query, coffee_name, isRelevant)
 
-    if coffee_name in relevant and isRelevant == False:
-        irrelevant.append(coffee_name)
-        relevant.remove(coffee_name)
-    elif coffee_name in irrelevant and isRelevant == True:
-        relevant.append(coffee_name)
-        irrelevant.remove(coffee_name)
+    if coffee_name in query_to_relevant[query] and isRelevant == False:
+        query_to_irrelevant[query].append(coffee_name)
+        query_to_relevant[query].remove(coffee_name)
+    elif coffee_name in query_to_irrelevant[query] and isRelevant == True:
+        query_to_relevant[query].append(coffee_name)
+        query_to_irrelevant[query].remove(coffee_name)
+
+    print("query:", query)
+    print("relevant:", query_to_relevant[query])
+    print("irrelevant:", query_to_irrelevant[query])
 
     answers = rank(SVDSearch(query))
 
