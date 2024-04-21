@@ -1,61 +1,135 @@
-<!doctype html>
+<!DOCTYPE html>
 <title>{% block title %}{% endblock %} - Flaskr</title>
-<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Kanit&family=Montserrat&family=Open+Sans:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  href="https://fonts.googleapis.com/css2?family=Kanit&family=Montserrat&family=Open+Sans:wght@500&display=swap"
+  rel="stylesheet"
+/>
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+/>
 <body>
-    <div class="full-body-container">
-        <div class="top-text">
-            <div class ="coffee-project-title">
-                Find Your Coffee ☕
-            </div>
-            </div>
-            <div class="input-box" onclick="sendFocus()">
-                <img src="{{ url_for('static', filename='images/mag.png') }}" />
-                <input placeholder="Type in a description of your favorite coffee flavors, types, preferences " id="filter-text-val" >
-            </div>
-            <center>
-                <button class="search-button" onClick=filterText()>
-                    Search
-                </button>
-            </center>
-            <div>
-        </div>
-        </div>
-        <!-- need answer box or else no results appear -->
-        <div id="answer-box">
-        </div>
+  <div class="full-body-container">
+    <div class="top-text">
+      <div class="coffee-project-title">Find Your Coffee ☕</div>
     </div>
+    <p>Must include:</p>
+    <div id="flavor-options"></div>
+    <div class="input-box" onclick="sendFocus()">
+      <img src="{{ url_for('static', filename='images/mag.png') }}" />
+      <input
+        placeholder="Type in a description of your favorite coffee flavors, types, preferences "
+        id="filter-text-val"
+      />
+    </div>
+    <button class="search-button" onClick="filterText()">Search</button>
+    <div></div>
+  </div>
+  <!-- need answer box or else no results appear -->
+  <div id="answer-box"></div>
 
-    <script>
+  <script>
+    let flavors = [
+      { name: "fruit", state: false },
+      { name: "sweet", state: false },
+      { name: "chocolate", state: false },
+      { name: "floral", state: false },
+      { name: "dark", state: false },
+      { name: "cedar", state: false },
+      { name: "zest", state: false },
+      { name: "juicy", state: false },
+      { name: "tart", state: false },
+      { name: "almond", state: false },
+    ];
 
-        function answerBoxTemplate(coffee_name,description, sim_score){
-            return `<div class=''>
-                <h3 class='episode-title'>${coffee_name}</h3>
-                <p class='episode-rating'>Description: ${description}</p>
-                <p class='similarity-score'>Score: ${sim_score}</p>
-            </div>`
+    function handleOption(index) {
+      const button = document.getElementById(`flavor${index}`);
+      flavors[index].state = !flavors[index].state;
+
+      if (flavors[index].state) {
+        button.classList.toggle("clicked");
+      } else {
+        button.classList.toggle("clicked");
+      }
+    }
+
+    document.getElementById("flavor-options").innerHTML = flavors
+      .map((flavor, index) => {
+        return `<button id=flavor${index} class=flavor-option>
+            ${flavor.name}
+        </button>`;
+      })
+      .join(" ");
+
+    flavors.map((obj, index) => {
+      document
+        .getElementById(`flavor${index}`)
+        .addEventListener("click", function () {
+          handleOption(index);
+        });
+    });
+
+    function answerBoxTemplate(coffee_name, description, sim_score, social_score) {
+      return `<div class='border-box'>
+                    <h3 class='coffee-title'>${coffee_name}</h3>
+                    <p class='coffee-desc'>Description: ${description}</p>
+                    <p>Similarity score: ${sim_score}</p>
+                    <p>Reddit score: ${social_score}</p>
+                    <button class="fa fa-thumbs-up"></button>
+                    <button class="fa fa-thumbs-down"></button>
+            </div> `;
+    }
+
+    function sendFocus() {
+      document.getElementById("filter-text-val").focus();
+    }
+
+    function filterText() {
+      let selected_flavors = [];
+      flavors.map((obj) => {
+        if (obj.state) {
+          selected_flavors.push(obj.name);
         }
+      });
 
-        function sendFocus(){
-            document.getElementById('filter-text-val').focus()
-        }
+      let shown_elements = 0;
 
-        function filterText(){
-            document.getElementById("answer-box").innerHTML = ""
-            // console.log(document.getElementById("filter-text-val").value)
-            fetch("/coffee?" + new URLSearchParams({ title: document.getElementById("filter-text-val").value }).toString())
-            .then((response) => response.json())
-            .then((data) => data.forEach(row => {
-                
-                let tempDiv = document.createElement("div")
-                tempDiv.innerHTML = answerBoxTemplate(row.coffee_name,row.description, row.sim_score)
-                document.getElementById("answer-box").appendChild(tempDiv)
-            }));
+      document.getElementById("answer-box").innerHTML = "";
+      fetch(
+        "/coffee-SVD?" +
+          new URLSearchParams({
+            title: document.getElementById("filter-text-val").value,
+          }).toString()
+      )
+        .then((response) => response.json())
+        .then((data) => {
+          for (let i = 0; shown_elements <= 10 && i < data.length; i++) {
+            const row = data[i];
+            let tempDiv = document.createElement("div");
 
-        }
-            
-    </script>
+            let valid_flavors = true;
+
+            selected_flavors.forEach((flavor) => {
+              if (!row.description.includes(flavor)) {
+                valid_flavors = false;
+              }
+            });
+
+            if (valid_flavors) {
+              shown_elements += 1;
+              tempDiv.innerHTML = answerBoxTemplate(
+                row.coffee_name,
+                row.description,
+                row.sim_score,
+                row.social_score
+              );
+              document.getElementById("answer-box").appendChild(tempDiv);
+            }
+          }
+        });
+    }
+  </script>
 </body>
-
