@@ -7,6 +7,7 @@ import pandas as pd
 import csv
 import findTop10
 import SVD
+from sklearn.feature_extraction.text import TfidfVectorizer
 
 # RUN: flask run --host=0.0.0.0 --port=5000
 
@@ -38,12 +39,6 @@ with open("data/data_cleaning_coffee.csv", "r") as csvfile:
 with open('sentiments.json') as f:
     sentiments = json.load(f)
 
-df = pd.read_csv("data/data_cleaning_coffee.csv")
-df['desc_all'] = df['desc_1'] + '\n' + df['desc_2'] + '\n' + df['desc_3']
-df['desc_all'] = df['desc_all'].astype(str)
-
-documents = df.values.tolist()
-
 def basic_search(query):
     results = []
     for name, description in name_to_desc1.items():
@@ -67,7 +62,7 @@ def cosineSearch(query):
     return answers
 
 def SVDSearch(query):
-    results = SVD.perform_SVD(documents, query)
+    results = SVD.all_docs_to_query(query)
     answers = []
     for i, name, roaster, desc, sim in results:
         answers.append(
@@ -135,10 +130,22 @@ def coffee_SVD_search():
 
 @app.route('/rocchio', methods=['POST'])
 def feedback_submit():
-    title = request.args.get('title')
+    query = request.args.get('title')
+    coffee_name = request.args.get("coffee_name")
     relevant = request.args.get('relevant')
-    
     return jsonify("success"),200
+
+
+
+
+df = pd.read_csv("data/data_cleaning_coffee.csv")
+df['desc_all'] = df['desc_1'] + '\n' + df['desc_2'] + '\n' + df['desc_3']
+df['desc_all'] = df['desc_all'].astype(str)
+vectorizer = TfidfVectorizer(stop_words = 'english', min_df = 70, max_df = 0.7)
+documents = df.values.tolist()
+td_matrix = vectorizer.fit_transform([x[-1] for x in documents])
+
+
 
 if "DB_NAME" not in os.environ:
     app.run(debug=True, host="0.0.0.0", port=8000)
