@@ -6,7 +6,7 @@ from sklearn.preprocessing import normalize
 from scipy.sparse.linalg import svds
 import matplotlib.pyplot as plt
 
-df = pd.read_csv("data/coffee_fix.csv")
+df = pd.read_csv("data/data_cleaning_coffee.csv")
 df['desc_all'] = df['desc_1'] + '\n' + df['desc_2'] + '\n' + df['desc_3']
 df['desc_all'] = df['desc_all'].astype(str)
 

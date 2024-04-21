@@ -17,14 +17,14 @@ current_directory = os.path.dirname(os.path.abspath(__file__))
 # Specify the path to the JSON file relative to the current script
 # json_file_path = os.path.join(current_directory, 'init.json')
 
-coffee_fix_csv_path = os.path.join(os.environ["ROOT_PATH"], "data/coffee_fix.csv")
+coffee_fix_csv_path = os.path.join(os.environ["ROOT_PATH"], "data/data_cleaning_coffee.csv")
 
 app = Flask(__name__)
 CORS(app)
 
 name_to_desc1 = {}
 
-with open("data/coffee_fix.csv", "r") as csvfile:
+with open("data/data_cleaning_coffee.csv", "r") as csvfile:
     csv_reader = csv.DictReader(csvfile)
     for r in csv_reader:
         if r["desc_1"] is not None:

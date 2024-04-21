@@ -10,7 +10,7 @@ import helpers as analysis
 from numpy import linalg as LA
 import numpy as np
 
-df = pd.read_csv("data/coffee_fix.csv")
+df = pd.read_csv("data/data_cleaning_coffee.csv")
 
 
 def findTopTen(user_query):
