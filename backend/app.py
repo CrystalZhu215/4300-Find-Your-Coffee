@@ -74,6 +74,41 @@ def SVDSearch(query):
         )
     return answers
 
+def rank(answers):
+
+    for coffee in answers:
+
+        roaster = coffee["roaster"].lower()
+
+        if roaster in sentiments.keys() and len(sentiments[roaster]) > 0:
+
+            avg_pos = 0
+            avg_neg = 0
+            comments = sentiments[roaster]
+
+            for comment in comments:
+
+                avg_pos += comment[1]["pos"]
+                avg_neg += comment[1]["neg"]
+                
+            avg_pos /= len(comments)
+            avg_neg /= len(comments)
+            coffee["reddit_score"] = avg_pos - avg_neg
+
+        else:
+
+            coffee["reddit_score"] = 0
+
+        if coffee["reddit_score"] == 0:
+            coffee["social_score"] = "Neutral"
+        elif coffee["reddit_score"] < 0:
+            coffee["social_score"] = "{}% Negative".format(-round(coffee["reddit_score"] * 100, 2))
+        else:
+            coffee["social_score"] = "{}% Positive".format(round(coffee["reddit_score"] * 100, 2))
+
+    answers = sorted(answers, key=(lambda x: x["reddit_score"]), reverse=True)
+
+    return answers
 
 @app.route("/")
 def home():
@@ -87,35 +122,7 @@ def coffee_search():
 @app.route("/coffee-SVD")
 def coffee_SVD_search():
     text = request.args.get("title")
-    answers = SVDSearch(text)
-    print(sentiments.keys())
-    for coffee in answers:
-        #print(coffee["roaster"])
-        roaster = coffee["roaster"].lower()
-        if roaster in sentiments.keys() and len(sentiments[roaster]) > 0:
-            print("roaster found")
-            print(sentiments[roaster])
-            avg_pos = 0
-            avg_neg = 0
-            comments = sentiments[roaster]
-            print(comments)
-            for comment in comments:
-                avg_pos += comment[1]["pos"]
-                avg_neg += comment[1]["neg"]
-            avg_pos /= len(comments)
-            avg_neg /= len(comments)
-            coffee["reddit_score"] = avg_pos - avg_neg
-        else:
-            coffee["reddit_score"] = 0
-
-        if coffee["reddit_score"] == 0:
-            coffee["social_score"] = "Neutral"
-        elif coffee["reddit_score"] < 0:
-            coffee["social_score"] = "{}% Negative".format(-round(coffee["reddit_score"] * 100, 2))
-        else:
-            coffee["social_score"] = "{}% Positive".format(round(coffee["reddit_score"] * 100, 2))
-
-    answers = sorted(answers, key=(lambda x: x["reddit_score"]), reverse=True)
+    answers = rank(SVDSearch(text))
     return json.dumps(answers)
 
 
