@@ -38,6 +38,12 @@ with open("data/data_cleaning_coffee.csv", "r") as csvfile:
 with open('sentiments.json') as f:
     sentiments = json.load(f)
 
+df = pd.read_csv("data/data_cleaning_coffee.csv")
+df['desc_all'] = df['desc_1'] + '\n' + df['desc_2'] + '\n' + df['desc_3']
+df['desc_all'] = df['desc_all'].astype(str)
+
+documents = df.values.tolist()
+
 def basic_search(query):
     results = []
     for name, description in name_to_desc1.items():
@@ -61,7 +67,7 @@ def cosineSearch(query):
     return answers
 
 def SVDSearch(query):
-    results = SVD.all_docs_to_query(query)
+    results = SVD.perform_SVD(documents, query)
     answers = []
     for i, name, roaster, desc, sim in results:
         answers.append(
@@ -131,9 +137,8 @@ def coffee_SVD_search():
 def feedback_submit():
     title = request.args.get('title')
     relevant = request.args.get('relevant')
+    
     return jsonify("success"),200
-
-
 
 if "DB_NAME" not in os.environ:
     app.run(debug=True, host="0.0.0.0", port=8000)
