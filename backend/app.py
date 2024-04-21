@@ -49,7 +49,8 @@ df['desc_all'] = df['desc_all'].astype(str)
 documents = df.values.tolist()
 
 # Get relevance
-relevant = np.ones(len(documents))
+relevant = [coffee['coffee_name'] for coffee in documents]
+irrelevant = []
 
 def basic_search(query):
     results = []
@@ -144,20 +145,18 @@ def coffee_SVD_search():
 def feedback_submit():
     query = request.args.get('title')
     coffee_name = request.args.get("coffee_name")
-    relevant = request.args.get('relevant')
+    isRelevant = request.args.get('relevant')
+
+    if coffee_name in relevant and isRelevant == False:
+        irrelevant.append(coffee_name)
+        relevant.remove(coffee_name)
+    elif coffee_name in irrelevant and isRelevant == True:
+        relevant.append(coffee_name)
+        irrelevant.remove(coffee_name)
+
+    # call search
+
     return jsonify("success"),200
-
-
-
-
-df = pd.read_csv("data/data_cleaning_coffee.csv")
-df['desc_all'] = df['desc_1'] + '\n' + df['desc_2'] + '\n' + df['desc_3']
-df['desc_all'] = df['desc_all'].astype(str)
-vectorizer = TfidfVectorizer(stop_words = 'english', min_df = 70, max_df = 0.7)
-documents = df.values.tolist()
-td_matrix = vectorizer.fit_transform([x[-1] for x in documents])
-
-
 
 if "DB_NAME" not in os.environ:
     app.run(debug=True, host="0.0.0.0", port=8000)
