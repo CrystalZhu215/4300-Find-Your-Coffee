@@ -4,6 +4,7 @@ from flask import Flask, render_template, request, jsonify
 from flask_cors import CORS
 from helpers.MySQLDatabaseHandler import MySQLDatabaseHandler
 import pandas as pd
+import numpy as np
 import csv
 import findTop10
 import SVD
@@ -35,14 +36,19 @@ with open("data/data_cleaning_coffee.csv", "r") as csvfile:
             description1 = r["desc_1"]
             name_to_desc1[name_of_blend] = description1
 
+# Get sentiments
 with open('sentiments.json') as f:
     sentiments = json.load(f)
 
+# Get documents
 df = pd.read_csv("data/data_cleaning_coffee.csv")
 df['desc_all'] = df['desc_1'] + '\n' + df['desc_2'] + '\n' + df['desc_3']
 df['desc_all'] = df['desc_all'].astype(str)
 
 documents = df.values.tolist()
+
+# Get relevance
+relevant = np.ones(len(documents))
 
 def basic_search(query):
     results = []
@@ -135,8 +141,8 @@ def coffee_SVD_search():
 
 @app.route('/rocchio', methods=['POST'])
 def feedback_submit():
-    title = request.args.get('title')
-    relevant = request.args.get('relevant')
+    query = request.args.get('title')
+    isRelevant = request.args.get('relevant')
     
     return jsonify("success"),200
 
