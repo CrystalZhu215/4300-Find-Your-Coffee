@@ -149,9 +149,13 @@ def coffee_SVD_search():
 
 @app.route('/rocchio', methods=['POST'])
 def feedback_submit():
-    query = request.args.get('title')
-    coffee_name = request.args.get("coffee_name")
-    isRelevant = request.args.get('relevant')
+    body = json.loads(request.data)
+
+    query = body.get("title")
+    coffee_name = body.get("coffee_name")
+    isRelevant = body.get("relevant")
+
+    print("data is here: ", query, coffee_name, isRelevant)
 
     if coffee_name in relevant and isRelevant == False:
         irrelevant.append(coffee_name)

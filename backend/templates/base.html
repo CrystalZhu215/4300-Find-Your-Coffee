@@ -72,14 +72,19 @@
         });
     });
 
-    function answerBoxTemplate(coffee_name, description, sim_score, social_score) {
+    function answerBoxTemplate(
+      coffee_name,
+      description,
+      sim_score,
+      social_score
+    ) {
       return `<div class='border-box'>
                     <h3 class='coffee-title'>${coffee_name}</h3>
                     <p class='coffee-desc'>Description: ${description}</p>
                     <p>Similarity score: ${sim_score}</p>
                     <p>Reddit score: ${social_score}</p>
-                    <button class="fa fa-thumbs-up" onclick="thumbsFeedback(true, ${coffee_name})"></button>
-                    <button class="fa fa-thumbs-down" onclick="thumbsFeedback(false, ${coffee_name})"></button>
+                    <button class="fa fa-thumbs-up" onclick='thumbsFeedback(true, "${coffee_name}")'></button>
+                    <button class="fa fa-thumbs-down" onclick='thumbsFeedback(false, "${coffee_name}")'></button>
             </div> `;
     }
 
@@ -87,28 +92,35 @@
       document.getElementById("filter-text-val").focus();
     }
 
+    function testFunction() {
+      console.log("testing");
+    }
+
     function thumbsFeedback(isRelevant, coffee_name) {
+      console.log("gotten data", isRelevant, coffee_name);
       document.getElementById("answer-box").innerHTML = "";
       fetch("/rocchio", {
-            method: 'POST',
-            body: new URLSearchParams({
-                title: document.getElementById("filter-text-val").value,
-                coffee_name: coffee_name,
-                relevant: isRelevant.toString()
-            })
-        })
-          .then((response) => response.json())
-          .then((data) => data.forEach(row => {
-              let tempDiv = document.createElement("div");
-              tempDiv.innerHTML = answerBoxTemplate(
-                  row.coffee_name,
-                  row.description,
-                  row.sim_score,
-                  row.social_score
-                );
-              document.getElementById("answer-box").appendChild(tempDiv);
-          }));
-}
+        method: "POST",
+        body: JSON.stringify({
+          title: document.getElementById("filter-text-val").value,
+          coffee_name: coffee_name,
+          relevant: isRelevant.toString(),
+        }),
+      })
+        .then((response) => response.json())
+        .then((data) =>
+          data.forEach((row) => {
+            let tempDiv = document.createElement("div");
+            tempDiv.innerHTML = answerBoxTemplate(
+              row.coffee_name,
+              row.description,
+              row.sim_score,
+              row.social_score
+            );
+            document.getElementById("answer-box").appendChild(tempDiv);
+          })
+        );
+    }
 
     function filterText() {
       let selected_flavors = [];
@@ -119,7 +131,6 @@
       });
 
       let shown_elements = 0;
-    
 
       document.getElementById("answer-box").innerHTML = "";
       fetch(
@@ -154,7 +165,6 @@
             }
           }
         });
-
     }
   </script>
 </body>
