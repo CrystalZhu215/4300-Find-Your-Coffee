@@ -78,14 +78,36 @@
                     <p class='coffee-desc'>Description: ${description}</p>
                     <p>Similarity score: ${sim_score}</p>
                     <p>Reddit score: ${social_score}</p>
-                    <button class="fa fa-thumbs-up"></button>
-                    <button class="fa fa-thumbs-down"></button>
+                    <button class="fa fa-thumbs-up" onclick="thumbsFeedback(true)"></button>
+                    <button class="fa fa-thumbs-down" onclick="thumbsFeedback(false)"></button>
             </div> `;
     }
 
     function sendFocus() {
       document.getElementById("filter-text-val").focus();
     }
+
+    function thumbsFeedback(isRelevant) {
+      document.getElementById("answer-box").innerHTML = "";
+      fetch("/rocchio", {
+            method: 'POST',
+            body: new URLSearchParams({
+                title: document.getElementById("filter-text-val").value,
+                relevant: isRelevant.toString()
+            })
+        })
+          .then((response) => response.json())
+          .then((data) => data.forEach(row => {
+              let tempDiv = document.createElement("div");
+              tempDiv.innerHTML = answerBoxTemplate(
+                  row.coffee_name,
+                  row.description,
+                  row.sim_score,
+                  row.social_score
+                );
+              document.getElementById("answer-box").appendChild(tempDiv);
+          }));
+}
 
     function filterText() {
       let selected_flavors = [];
@@ -96,6 +118,7 @@
       });
 
       let shown_elements = 0;
+    
 
       document.getElementById("answer-box").innerHTML = "";
       fetch(
@@ -130,6 +153,7 @@
             }
           }
         });
+
     }
   </script>
 </body>

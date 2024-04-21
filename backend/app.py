@@ -1,6 +1,6 @@
 import json
 import os
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, jsonify
 from flask_cors import CORS
 from helpers.MySQLDatabaseHandler import MySQLDatabaseHandler
 import pandas as pd
@@ -122,8 +122,17 @@ def coffee_search():
 @app.route("/coffee-SVD")
 def coffee_SVD_search():
     text = request.args.get("title")
+
     answers = rank(SVDSearch(text))
+    
     return json.dumps(answers)
+
+@app.route('/rocchio', methods=['POST'])
+def feedback_submit():
+    title = request.args.get('title')
+    relevant = request.args.get('relevant')
+    return jsonify("success"),200
+
 
 
 if "DB_NAME" not in os.environ:
