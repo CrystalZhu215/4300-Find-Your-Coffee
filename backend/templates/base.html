@@ -16,7 +16,6 @@
     <div class="top-text">
       <div class="coffee-project-title">Find Your Coffee ☕</div>
     </div>
-    <p>Filter by:</p>
     <div id="flavor-options"></div>
     <div class="input-box" onclick="sendFocus()">
       <img src="{{ url_for('static', filename='images/mag.png') }}" />
@@ -109,21 +108,6 @@
       })
       .then((response) => response.json());
       filterText();
-      /*
-        .then((response) => response.json())
-        .then((data) =>
-          data.forEach((row) => {
-            let tempDiv = document.createElement("div");
-            tempDiv.innerHTML = answerBoxTemplate(
-              row.coffee_name,
-              row.description,
-              row.sim_score,
-              row.social_score
-            );
-            document.getElementById("answer-box").appendChild(tempDiv);
-          })
-        );
-      */
     }
 
     function filterText() {
