@@ -154,7 +154,7 @@ def coffee_SVD_search():
     
     return json.dumps(answers)
 
-@app.route('/rocchio', methods=['POST'])
+@app.route('/relevance-update', methods=['POST'])
 def feedback_submit():
     body = json.loads(request.data)
 
@@ -175,9 +175,9 @@ def feedback_submit():
     print("relevant:", query_to_relevant[query])
     print("irrelevant:", query_to_irrelevant[query])
 
-    answers = rank(SVDSearch(query))
+    # = rank(SVDSearch(query))
 
-    return json.dumps(answers)
+    return 'SUCCESS'
 
 if "DB_NAME" not in os.environ:
     app.run(debug=True, host="0.0.0.0", port=8000)

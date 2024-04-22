@@ -99,7 +99,7 @@
     function thumbsFeedback(isRelevant, coffee_name) {
       console.log("gotten data", isRelevant, coffee_name);
       document.getElementById("answer-box").innerHTML = "";
-      fetch("/rocchio", {
+      fetch("/relevance-update", {
         method: "POST",
         body: JSON.stringify({
           title: document.getElementById("filter-text-val").value,
@@ -107,6 +107,9 @@
           relevant: isRelevant,
         }),
       })
+      .then((response) => response.json());
+      filterText();
+      /*
         .then((response) => response.json())
         .then((data) =>
           data.forEach((row) => {
@@ -120,6 +123,7 @@
             document.getElementById("answer-box").appendChild(tempDiv);
           })
         );
+      */
     }
 
     function filterText() {
