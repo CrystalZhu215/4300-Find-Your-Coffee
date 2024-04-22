@@ -82,7 +82,7 @@ def cosineSearch(query):
 
 def SVDSearch(query):
     if query not in query_to_relevant.keys():
-        query_to_relevant[query] = df['name'].tolist()
+        query_to_relevant[query] = []
         query_to_irrelevant[query] = []
 
     relevant = query_to_relevant[query]
@@ -164,12 +164,14 @@ def feedback_submit():
 
     print("data is here: ", query, coffee_name, isRelevant)
 
-    if coffee_name in query_to_relevant[query] and isRelevant == False:
+    if coffee_name not in query_to_irrelevant[query] and isRelevant == False:
         query_to_irrelevant[query].append(coffee_name)
-        query_to_relevant[query].remove(coffee_name)
-    elif coffee_name in query_to_irrelevant[query] and isRelevant == True:
+        if coffee_name in query_to_relevant[query]:
+            query_to_relevant[query].remove(coffee_name)
+    elif coffee_name not in query_to_relevant[query] and isRelevant == True:
         query_to_relevant[query].append(coffee_name)
-        query_to_irrelevant[query].remove(coffee_name)
+        if coffee_name in query_to_irrelevant[query]:
+            query_to_irrelevant[query].remove(coffee_name)
 
     print("query:", query)
     print("relevant:", query_to_relevant[query])
