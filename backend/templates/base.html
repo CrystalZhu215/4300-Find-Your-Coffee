@@ -75,13 +75,17 @@
       coffee_name,
       description,
       sim_score,
-      social_score
+      social_score,
+      link
     ) {
       return `<div class='border-box'>
                     <h3 class='coffee-title'>${coffee_name}</h3>
                     <p class='coffee-desc'>Description: ${description}</p>
                     <p>Similarity score: ${sim_score}</p>
                     <p>Reddit score: ${social_score}</p>
+                    <a href=${link} target="_blank">${link}</a>
+                    <br />
+                    <br />
                     <button class="fa fa-thumbs-up" onclick='thumbsFeedback(true, "${coffee_name}")'></button>
                     <button class="fa fa-thumbs-down" onclick='thumbsFeedback(false, "${coffee_name}")'></button>
             </div> `;
@@ -147,7 +151,8 @@
                 row.coffee_name,
                 row.description,
                 row.sim_score,
-                row.social_score
+                row.social_score,
+                row.link
               );
               document.getElementById("answer-box").appendChild(tempDiv);
             }

@@ -8,6 +8,7 @@ import numpy as np
 import csv
 import findTop10
 import SVD
+import re
 from sklearn.feature_extraction.text import TfidfVectorizer
 
 # RUN: flask run --host=0.0.0.0 --port=5000
@@ -46,6 +47,20 @@ df = pd.read_csv("data/data_cleaning_coffee.csv")
 df['desc_all'] = df['desc_1'] + '\n' + df['desc_2'] + '\n' + df['desc_3']
 df['desc_all'] = df['desc_all'].astype(str)
 
+re_link = "(Visit\ )(https*:\/\/)*[a-zA-Z0-9]+(\.)[a-zA-Z]+((\.)[a-zA-Z]+)*"
+def extract_link(text):
+    match = re.search(re_link, text)
+    if match is None:
+        return ''
+    else:
+        span = match.span()
+        link = match.string[span[0]:span[1]].split(' ')[1]
+        if not link.startswith('http'):
+            link = 'https://' + link
+        return link
+
+df['link'] = df['desc_2'].apply(extract_link)
+
 documents = df.values.tolist()
 
 # Get relevance
@@ -69,8 +84,7 @@ def basic_search(query):
 def cosineSearch(query):
     results = findTop10.findTopTen(query)
     answers = []
-    for i, x in enumerate(results):
-        # print(x[1])
+    for _, x in enumerate(results):
         answers.append(
             {
                 "coffee_name": x[0]["name"],
@@ -90,13 +104,14 @@ def SVDSearch(query):
 
     results = SVD.perform_SVD(documents, query, relevant, irrelevant, coffee_name_to_index)
     answers = []
-    for _, name, roaster, desc, sim in results:
+    for _, name, roaster, desc, link, sim in results:
         answers.append(
             {
                 "coffee_name": name,
                 "roaster": roaster,
                 "description": desc,
                 "sim_score": sim,
+                "link": link
             }
         )
     return answers
