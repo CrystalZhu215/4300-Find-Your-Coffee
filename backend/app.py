@@ -8,6 +8,7 @@ import numpy as np
 import csv
 import findTop10
 import SVD
+import re
 from sklearn.feature_extraction.text import TfidfVectorizer
 
 # RUN: flask run --host=0.0.0.0 --port=5000
@@ -46,6 +47,20 @@ df = pd.read_csv("data/data_cleaning_coffee.csv")
 df['desc_all'] = df['desc_1'] + '\n' + df['desc_2'] + '\n' + df['desc_3']
 df['desc_all'] = df['desc_all'].astype(str)
 
+re_link = "(Visit\ )(https*:\/\/)*[a-zA-Z0-9]+(\.)[a-zA-Z]+((\.)[a-zA-Z]+)*"
+def extract_link(text):
+    match = re.search(re_link, text)
+    if match is None:
+        return ''
+    else:
+        span = match.span()
+        link = match.string[span[0]:span[1]].split(' ')[1]
+        if not link.startswith('http'):
+            link = 'https://' + link
+        return link
+
+df['link'] = df['desc_2'].apply(extract_link)
+
 documents = df.values.tolist()
 
 # Get relevance
@@ -69,8 +84,7 @@ def basic_search(query):
 def cosineSearch(query):
     results = findTop10.findTopTen(query)
     answers = []
-    for i, x in enumerate(results):
-        # print(x[1])
+    for _, x in enumerate(results):
         answers.append(
             {
                 "coffee_name": x[0]["name"],
@@ -82,7 +96,7 @@ def cosineSearch(query):
 
 def SVDSearch(query):
     if query not in query_to_relevant.keys():
-        query_to_relevant[query] = df['name'].tolist()
+        query_to_relevant[query] = []
         query_to_irrelevant[query] = []
 
     relevant = query_to_relevant[query]
@@ -90,13 +104,14 @@ def SVDSearch(query):
 
     results = SVD.perform_SVD(documents, query, relevant, irrelevant, coffee_name_to_index)
     answers = []
-    for _, name, roaster, desc, sim in results:
+    for _, name, roaster, desc, link, sim in results:
         answers.append(
             {
                 "coffee_name": name,
                 "roaster": roaster,
                 "description": desc,
                 "sim_score": sim,
+                "link": link
             }
         )
     return answers
@@ -154,7 +169,7 @@ def coffee_SVD_search():
     
     return json.dumps(answers)
 
-@app.route('/rocchio', methods=['POST'])
+@app.route('/relevance-update', methods=['POST'])
 def feedback_submit():
     body = json.loads(request.data)
 
@@ -164,20 +179,20 @@ def feedback_submit():
 
     print("data is here: ", query, coffee_name, isRelevant)
 
-    if coffee_name in query_to_relevant[query] and isRelevant == False:
+    if coffee_name not in query_to_irrelevant[query] and isRelevant == False:
         query_to_irrelevant[query].append(coffee_name)
-        query_to_relevant[query].remove(coffee_name)
-    elif coffee_name in query_to_irrelevant[query] and isRelevant == True:
+        if coffee_name in query_to_relevant[query]:
+            query_to_relevant[query].remove(coffee_name)
+    elif coffee_name not in query_to_relevant[query] and isRelevant == True:
         query_to_relevant[query].append(coffee_name)
-        query_to_irrelevant[query].remove(coffee_name)
+        if coffee_name in query_to_irrelevant[query]:
+            query_to_irrelevant[query].remove(coffee_name)
 
     print("query:", query)
     print("relevant:", query_to_relevant[query])
     print("irrelevant:", query_to_irrelevant[query])
 
-    answers = rank(SVDSearch(query))
-
-    return json.dumps(answers)
+    return 'SUCCESS'
 
 if "DB_NAME" not in os.environ:
     app.run(debug=True, host="0.0.0.0", port=8000)
