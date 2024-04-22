@@ -175,8 +175,6 @@ def feedback_submit():
     print("relevant:", query_to_relevant[query])
     print("irrelevant:", query_to_irrelevant[query])
 
-    # = rank(SVDSearch(query))
-
     return 'SUCCESS'
 
 if "DB_NAME" not in os.environ:
