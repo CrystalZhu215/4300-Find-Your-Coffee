@@ -116,39 +116,30 @@ def SVDSearch(query):
         )
     return answers
 
-def rank(answers):
-
+def rank_with_social(answers):
     for coffee in answers:
-
         roaster = coffee["roaster"].lower()
-
         if roaster in sentiments.keys() and len(sentiments[roaster]) > 0:
-
             avg_pos = 0
             avg_neg = 0
             comments = sentiments[roaster]
-
             for comment in comments:
-
                 avg_pos += comment[1]["pos"]
                 avg_neg += comment[1]["neg"]
-                
             avg_pos /= len(comments)
             avg_neg /= len(comments)
             coffee["reddit_score"] = avg_pos - avg_neg
-
         else:
-
             coffee["reddit_score"] = 0
-
         if coffee["reddit_score"] == 0:
             coffee["social_score"] = "Neutral"
         elif coffee["reddit_score"] < 0:
             coffee["social_score"] = "{}% Negative".format(-round(coffee["reddit_score"] * 100, 2))
         else:
             coffee["social_score"] = "{}% Positive".format(round(coffee["reddit_score"] * 100, 2))
+        coffee["overall_score"] = (0.6 * coffee["sim_score"]) + (0.4 * coffee["reddit_score"])
 
-    answers = sorted(answers, key=(lambda x: x["reddit_score"]), reverse=True)
+    answers = sorted(answers, key=(lambda x: x["overall_score"]), reverse=True)
 
     return answers
 
@@ -164,10 +155,24 @@ def coffee_search():
 @app.route("/coffee-SVD")
 def coffee_SVD_search():
     query = request.args.get("title")
+    selected_flavors = request.args.get("selected_flavors").split(",")
 
-    answers = rank(SVDSearch(query))
+    answers = SVDSearch(query)
+
+    filtered_answers = []
+
+    for data in answers:
+        valid_data = True
+        for flavor in selected_flavors:
+            if flavor not in data["description"]:
+                valid_data = False
+                break
+        if valid_data:
+            filtered_answers.append(data)
+
+    final_answers = rank_with_social(filtered_answers)
     
-    return json.dumps(answers)
+    return json.dumps(final_answers)
 
 @app.route('/relevance-update', methods=['POST'])
 def feedback_submit():

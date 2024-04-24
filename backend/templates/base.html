@@ -82,7 +82,7 @@
                     <h3 class='coffee-title'>${coffee_name}</h3>
                     <p class='coffee-desc'>${description}</p>
                     <p>Similarity score: ${sim_score}</p>
-                    <p>Reddit score: ${social_score}</p>
+                    <p>Brand score (from r/coffee): ${social_score}</p>
                     <a href=${link} target="_blank">${link}</a>
                     <br />
                     <br />
@@ -109,8 +109,7 @@
           coffee_name: coffee_name,
           relevant: isRelevant,
         }),
-      })
-      .then((response) => response.json());
+      }).then((response) => response.json());
       filterText();
     }
 
@@ -129,6 +128,7 @@
         "/coffee-SVD?" +
           new URLSearchParams({
             title: document.getElementById("filter-text-val").value,
+            selected_flavors: selected_flavors,
           }).toString()
       )
         .then((response) => response.json())
