@@ -104,14 +104,15 @@ def SVDSearch(query):
 
     results = SVD.perform_SVD(documents, query, relevant, irrelevant, coffee_name_to_index)
     answers = []
-    for _, name, roaster, desc, link, sim in results:
+    for _, name, roaster, desc, link, sim, all_desc in results:
         answers.append(
             {
                 "coffee_name": name,
                 "roaster": roaster,
                 "description": desc,
                 "sim_score": sim,
-                "link": link
+                "link": link,
+                "all_desc": all_desc
             }
         )
     return answers
@@ -164,7 +165,7 @@ def coffee_SVD_search():
     for data in answers:
         valid_data = True
         for flavor in selected_flavors:
-            if flavor not in data["description"]:
+            if flavor not in data["all_desc"]:
                 valid_data = False
                 break
         if valid_data:
