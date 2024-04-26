@@ -3,14 +3,9 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link
-  href="https://fonts.googleapis.com/css2?family=Kanit&family=Montserrat&family=Open+Sans:wght@500&display=swap"
-  rel="stylesheet"
-/>
-<link
-  rel="stylesheet"
-  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
-/>
+<link href="https://fonts.googleapis.com/css2?family=Kanit&family=Montserrat&family=Open+Sans:wght@500&display=swap"
+  rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
 
 <body>
   <div class="full-body-container">
@@ -18,18 +13,30 @@
       <div class="coffee-project-title">Find Your Coffee ☕</div>
     </div>
     <div id="flavor-options"></div>
+    <h4 class="title">Filter by roast level:</h4>
+    <div class="flex-box general-search">
+      <div class="input-box">
+        <input placeholder="e.g. Medium-Light" list="roasts" name="roasts" id="roasts" />
+      </div>
+    </div>
+    <datalist id="roasts">
+      <option value="Very Dark">Very Dark</option>
+      <option value="Dark">Dark</option>
+      <option value="Medium">Medium</option>
+      <option value="Medium-Light">Medium-Light</option>
+      <option value="Light">Light</option>
+    </datalist>
     <div class="input-box" onclick="sendFocus()">
       <img src="{{ url_for('static', filename='images/mag.png') }}" />
-      <input
-        placeholder="Type in a description of your favorite coffee flavors, types, preferences "
-        id="filter-text-val"
-      />
+      <input placeholder="Type in a description of your favorite coffee flavors, types, preferences "
+        id="filter-text-val" />
     </div>
     <button class="search-button" onClick="filterText()">Search</button>
     <div></div>
   </div>
   <!-- need answer box or else no results appear -->
   <div id="answer-box"></div>
+
 
   <script>
     let flavors = [
@@ -89,11 +96,10 @@
                     <br />
                     <p class='coffee-desc'><span class='bold'>Price</span>: ${price}</p>
                     <p class='coffee-desc'><span class='bold'>Roast Level</span>: ${roast_level}</p>
-                    <p class='coffee-desc'><span class='bold'>Similarity score</span>: ${
-                      sim_score != 0
-                        ? sim_score
-                        : "0 - Type a description or like/dislike coffees to see similarity score!"
-                    }</p>
+                    <p class='coffee-desc'><span class='bold'>Similarity score</span>: ${sim_score != 0
+          ? sim_score
+          : "0 - Type a description or like/dislike coffees to see similarity score!"
+        }</p>
                     <p class='coffee-desc'><span class='bold'>Roaster score (from r/coffee)</span>: ${social_score}</p>
                     <a href=${link} target="_blank" class='coffee-desc'>${link}</a>
                     <br />
@@ -136,10 +142,10 @@
       document.getElementById("answer-box").innerHTML = "";
       fetch(
         "/coffee-SVD?" +
-          new URLSearchParams({
-            title: document.getElementById("filter-text-val").value,
-            selected_flavors: selected_flavors,
-          }).toString()
+        new URLSearchParams({
+          title: document.getElementById("filter-text-val").value,
+          selected_flavors: selected_flavors,
+        }).toString()
       )
         .then((response) => response.json())
         .then((data) => {
