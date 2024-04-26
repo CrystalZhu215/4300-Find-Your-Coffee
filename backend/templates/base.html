@@ -133,8 +133,6 @@
         }
       });
 
-      let shown_elements = 0;
-
       document.getElementById("answer-box").innerHTML = "";
       fetch(
         "/coffee-SVD?" +
@@ -145,32 +143,21 @@
       )
         .then((response) => response.json())
         .then((data) => {
-          for (let i = 0; shown_elements <= 10 && i < data.length; i++) {
+          for (let i = 0; i < 10; i++) {
             const row = data[i];
             let tempDiv = document.createElement("div");
 
-            let valid_flavors = true;
-
-            selected_flavors.forEach((flavor) => {
-              if (!row.description.includes(flavor)) {
-                valid_flavors = false;
-              }
-            });
-
-            if (valid_flavors) {
-              shown_elements += 1;
-              tempDiv.innerHTML = answerBoxTemplate(
-                row.coffee_name,
-                row.roaster,
-                row.description,
-                row.sim_score,
-                row.social_score,
-                row.link,
-                row.price,
-                row.roast_level
-              );
-              document.getElementById("answer-box").appendChild(tempDiv);
-            }
+            tempDiv.innerHTML = answerBoxTemplate(
+              row.coffee_name,
+              row.roaster,
+              row.description,
+              row.sim_score,
+              row.social_score,
+              row.link,
+              row.price,
+              row.roast_level
+            );
+            document.getElementById("answer-box").appendChild(tempDiv);
           }
         });
     }
