@@ -46,6 +46,7 @@ with open("sentiments.json") as f:
 
 # Get documents
 df = pd.read_csv("data/data_cleaning_coffee.csv")
+df.dropna(axis=0, how="any", inplace=True)
 df["desc_all"] = df["desc_1"] + "\n" + df["desc_2"] + "\n" + df["desc_3"]
 df["desc_all"] = df["desc_all"].astype(str)
 
@@ -100,6 +101,8 @@ def cosineSearch(query):
 
 
 def SVDSearch(query):
+    # def SVDSearch(query, price_filter, roast_filter):
+
     if query not in query_to_relevant.keys():
         query_to_relevant[query] = []
         query_to_irrelevant[query] = []
@@ -112,6 +115,10 @@ def SVDSearch(query):
     )
     answers = []
     for _, name, roaster, desc, link, sim, all_desc, price, roast_level in results:
+        # if (
+        #     roast_level in roast_filter
+        #     and float(price[price.find("$") + 1 : price.find("/")]) < price_filter
+        # ):
         answers.append(
             {
                 "coffee_name": name,
@@ -120,8 +127,8 @@ def SVDSearch(query):
                 "sim_score": sim,
                 "link": link,
                 "all_desc": all_desc,
-                # "price": price,
-                # "roast_level": roast_level,
+                "price": price,
+                "roast_level": roast_level,
             }
         )
     return answers

@@ -3,14 +3,10 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link
-  href="https://fonts.googleapis.com/css2?family=Kanit&family=Montserrat&family=Open+Sans:wght@500&display=swap"
-  rel="stylesheet"
-/>
-<link
-  rel="stylesheet"
-  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
-/>
+<link href="https://fonts.googleapis.com/css2?family=Kanit&family=Montserrat&family=Open+Sans:wght@500&display=swap"
+  rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+
 <body>
   <div class="full-body-container">
     <div class="top-text">
@@ -19,10 +15,8 @@
     <div id="flavor-options"></div>
     <div class="input-box" onclick="sendFocus()">
       <img src="{{ url_for('static', filename='images/mag.png') }}" />
-      <input
-        placeholder="Type in a description of your favorite coffee flavors, types, preferences "
-        id="filter-text-val"
-      />
+      <input placeholder="Type in a description of your favorite coffee flavors, types, preferences "
+        id="filter-text-val" />
     </div>
     <button class="search-button" onClick="filterText()">Search</button>
     <div></div>
@@ -77,12 +71,16 @@
       description,
       sim_score,
       social_score,
-      link
+      link,
+      price,
+      roast_level
     ) {
       return `<div class='border-box'>
                     <h3 class='coffee-title'>${coffee_name}</h3>
                     <p class='coffee-title'>${roaster_name}</p>
                     <p class='coffee-desc'>${description}</p>
+                    <p class='coffee-desc'>${price}</p>
+                    <p class='coffee-desc'>${roast_level}</p>
                     <p>Similarity score: ${sim_score}</p>
                     <p>Brand score (from r/coffee): ${social_score}</p>
                     <a href=${link} target="_blank">${link}</a>
@@ -128,10 +126,10 @@
       document.getElementById("answer-box").innerHTML = "";
       fetch(
         "/coffee-SVD?" +
-          new URLSearchParams({
-            title: document.getElementById("filter-text-val").value,
-            selected_flavors: selected_flavors,
-          }).toString()
+        new URLSearchParams({
+          title: document.getElementById("filter-text-val").value,
+          selected_flavors: selected_flavors,
+        }).toString()
       )
         .then((response) => response.json())
         .then((data) => {
@@ -155,7 +153,9 @@
                 row.description,
                 row.sim_score,
                 row.social_score,
-                row.link
+                row.link,
+                row.price,
+                row.roast_level
               );
               document.getElementById("answer-box").appendChild(tempDiv);
             }
