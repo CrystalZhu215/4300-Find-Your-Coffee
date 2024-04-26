@@ -124,7 +124,7 @@ def SVDSearch(query):
                 "coffee_name": name,
                 "roaster": roaster,
                 "description": desc,
-                "sim_score": sim,
+                "sim_score": round(sim, 3),
                 "link": link,
                 "all_desc": all_desc,
                 "price": price,
