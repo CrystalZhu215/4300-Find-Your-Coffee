@@ -183,21 +183,29 @@
       )
         .then((response) => response.json())
         .then((data) => {
-          for (let i = 0; i < 10; i++) {
-            const row = data[i];
-            let tempDiv = document.createElement("div");
+          if (data.length == 0) {
+            let noResults = document.createElement("div");
+            noResults.innerHTML = `<div>
+                    <h3>No results found. Please try another query or use different filters.</h3>
+                    </div>`;
+            document.getElementById("answer-box").appendChild(noResults);
+          } else {
+            for (let i = 0; i < 10; i++) {
+              const row = data[i];
+              let tempDiv = document.createElement("div");
 
-            tempDiv.innerHTML = answerBoxTemplate(
-              row.coffee_name,
-              row.roaster,
-              row.description,
-              row.sim_score,
-              row.social_score,
-              row.link,
-              row.price,
-              row.roast_level
-            );
-            document.getElementById("answer-box").appendChild(tempDiv);
+              tempDiv.innerHTML = answerBoxTemplate(
+                row.coffee_name,
+                row.roaster,
+                row.description,
+                row.sim_score,
+                row.social_score,
+                row.link,
+                row.price,
+                row.roast_level
+              );
+              document.getElementById("answer-box").appendChild(tempDiv);
+            }
           }
         });
     }
