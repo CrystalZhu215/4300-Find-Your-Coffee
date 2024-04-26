@@ -11,18 +11,47 @@
   rel="stylesheet"
   href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
 />
+
 <body>
   <div class="full-body-container">
     <div class="top-text">
       <div class="coffee-project-title">Find Your Coffee ☕</div>
     </div>
     <div id="flavor-options"></div>
+
     <div class="input-box" onclick="sendFocus()">
       <img src="{{ url_for('static', filename='images/mag.png') }}" />
       <input
         placeholder="Type in a description of your favorite coffee flavors, types, preferences "
         id="filter-text-val"
       />
+    </div>
+
+    <div class="filter-container">
+      <p class="coffee-desc filter-text">Filter by roast level:</p>
+      <select id="roast-select">
+        <option value="Any">Any</option>
+        <option value="Very Dark">Very Dark</option>
+        <option value="Dark">Dark</option>
+        <option value="Medium">Medium</option>
+        <option value="Medium-Light">Medium-Light</option>
+        <option value="Light">Light</option>
+      </select>
+    </div>
+
+    <div class="filter-container">
+      <p class="coffee-desc filter-text">Filter by max price:</p>
+      <input
+        type="range"
+        id="price-select"
+        name="price-select"
+        min="0"
+        max="75"
+        value="75"
+        onchange="changePrice()"
+      />
+      <p class="coffee-desc margin-left" id="price-label">$ 75</p>
+      <span class="small-text coffee-desc"> / 340 grams (12 ounces)</span>
     </div>
     <button class="search-button" onClick="filterText()">Search</button>
     <div></div>
@@ -43,6 +72,12 @@
       { name: "tart", state: false },
       { name: "almond", state: false },
     ];
+
+    function changePrice() {
+      const priceSelect = document.getElementById("price-select");
+      const priceLabel = document.getElementById("price-label");
+      priceLabel.innerText = `$ ${priceSelect.value}`;
+    }
 
     function handleOption(index) {
       const button = document.getElementById(`flavor${index}`);
@@ -73,15 +108,28 @@
 
     function answerBoxTemplate(
       coffee_name,
+      roaster_name,
       description,
       sim_score,
       social_score,
-      link
+      link,
+      price,
+      roast_level
     ) {
       return `<div class='border-box'>
                     <h3 class='coffee-title'>${coffee_name}</h3>
+                    <p class='coffee-desc'><span class='bold'>Roaster</span>: ${roaster_name}</p>
                     <p class='coffee-desc'>${description}</p>
-                    <a href=${link} target="_blank">${link}</a>
+                    <br />
+                    <p class='coffee-desc'><span class='bold'>Price</span>: ${price}</p>
+                    <p class='coffee-desc'><span class='bold'>Roast Level</span>: ${roast_level}</p>
+                    <p class='coffee-desc'><span class='bold'>Similarity score</span>: ${
+                      sim_score != 0
+                        ? sim_score
+                        : "0 - Type a description or like/dislike coffees to see similarity score!"
+                    }</p>
+                    <p class='coffee-desc'><span class='bold'>Roaster score (from r/coffee)</span>: ${social_score}</p>
+                    <a href=${link} target="_blank" class='coffee-desc'>${link}</a>
                     <br />
                     <p>Similarity score: ${sim_score}</p>
                     <p>Reddit score: ${social_score}</p>
@@ -108,8 +156,7 @@
           coffee_name: coffee_name,
           relevant: isRelevant,
         }),
-      })
-      .then((response) => response.json());
+      }).then((response) => response.json());
       filterText();
     }
 
@@ -121,40 +168,36 @@
         }
       });
 
-      let shown_elements = 0;
+      let selected_roast = document.getElementById("roast-select").value;
+      let selected_price = document.getElementById("price-select").value;
 
       document.getElementById("answer-box").innerHTML = "";
       fetch(
         "/coffee-SVD?" +
           new URLSearchParams({
             title: document.getElementById("filter-text-val").value,
+            selected_flavors: selected_flavors,
+            roast: selected_roast,
+            price: selected_price,
           }).toString()
       )
         .then((response) => response.json())
         .then((data) => {
-          for (let i = 0; shown_elements <= 10 && i < data.length; i++) {
+          for (let i = 0; i < 10; i++) {
             const row = data[i];
             let tempDiv = document.createElement("div");
 
-            let valid_flavors = true;
-
-            selected_flavors.forEach((flavor) => {
-              if (!row.description.includes(flavor)) {
-                valid_flavors = false;
-              }
-            });
-
-            if (valid_flavors) {
-              shown_elements += 1;
-              tempDiv.innerHTML = answerBoxTemplate(
-                row.coffee_name,
-                row.description,
-                row.sim_score,
-                row.social_score,
-                row.link
-              );
-              document.getElementById("answer-box").appendChild(tempDiv);
-            }
+            tempDiv.innerHTML = answerBoxTemplate(
+              row.coffee_name,
+              row.roaster,
+              row.description,
+              row.sim_score,
+              row.social_score,
+              row.link,
+              row.price,
+              row.roast_level
+            );
+            document.getElementById("answer-box").appendChild(tempDiv);
           }
         });
     }

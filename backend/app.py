@@ -23,7 +23,9 @@ current_directory = os.path.dirname(os.path.abspath(__file__))
 # Specify the path to the JSON file relative to the current script
 # json_file_path = os.path.join(current_directory, 'init.json')
 
-coffee_fix_csv_path = os.path.join(os.environ["ROOT_PATH"], "data/data_cleaning_coffee.csv")
+coffee_fix_csv_path = os.path.join(
+    os.environ["ROOT_PATH"], "data/data_cleaning_coffee.csv"
+)
 
 app = Flask(__name__)
 CORS(app)
@@ -39,27 +41,31 @@ with open("data/data_cleaning_coffee.csv", "r") as csvfile:
             name_to_desc1[name_of_blend] = description1
 
 # Get sentiments
-with open('sentiments.json') as f:
+with open("sentiments.json") as f:
     sentiments = json.load(f)
 
 # Get documents
 df = pd.read_csv("data/data_cleaning_coffee.csv")
-df['desc_all'] = df['desc_1'] + '\n' + df['desc_2'] + '\n' + df['desc_3']
-df['desc_all'] = df['desc_all'].astype(str)
+df.dropna(axis=0, how="any", inplace=True)
+df["desc_all"] = df["desc_1"] + "\n" + df["desc_2"] + "\n" + df["desc_3"]
+df["desc_all"] = df["desc_all"].astype(str)
 
 re_link = "(Visit\ )(https*:\/\/)*[a-zA-Z0-9]+(\.)[a-zA-Z]+((\.)[a-zA-Z]+)*"
+
+
 def extract_link(text):
     match = re.search(re_link, text)
     if match is None:
-        return ''
+        return ""
     else:
         span = match.span()
-        link = match.string[span[0]:span[1]].split(' ')[1]
-        if not link.startswith('http'):
-            link = 'https://' + link
+        link = match.string[span[0] : span[1]].split(" ")[1]
+        if not link.startswith("http"):
+            link = "https://" + link
         return link
 
-df['link'] = df['desc_2'].apply(extract_link)
+
+df["link"] = df["desc_2"].apply(extract_link)
 
 documents = df.values.tolist()
 
@@ -69,9 +75,8 @@ query_to_irrelevant = {}
 
 # Get name to index
 combined_names = df[["name"]].apply(lambda x: " ".join(x.dropna()), axis=1)
-coffee_name_to_index = {
-    name: i for i, name in enumerate(combined_names)
-}
+coffee_name_to_index = {name: i for i, name in enumerate(combined_names)}
+
 
 def basic_search(query):
     results = []
@@ -94,7 +99,10 @@ def cosineSearch(query):
         )
     return answers
 
+
 def SVDSearch(query):
+    # def SVDSearch(query, price_filter, roast_filter):
+
     if query not in query_to_relevant.keys():
         query_to_relevant[query] = []
         query_to_irrelevant[query] = []
@@ -102,74 +110,112 @@ def SVDSearch(query):
     relevant = query_to_relevant[query]
     irrelevant = query_to_irrelevant[query]
 
-    results = SVD.perform_SVD(documents, query, relevant, irrelevant, coffee_name_to_index)
+    results = SVD.perform_SVD(
+        documents, query, relevant, irrelevant, coffee_name_to_index
+    )
     answers = []
-    for _, name, roaster, desc, link, sim in results:
+    for _, name, roaster, desc, link, sim, all_desc, price, roast_level in results:
+        # if (
+        #     roast_level in roast_filter
+        #     and float(price[price.find("$") + 1 : price.find("/")]) < price_filter
+        # ):
         answers.append(
             {
                 "coffee_name": name,
                 "roaster": roaster,
                 "description": desc,
-                "sim_score": sim,
-                "link": link
+                "sim_score": round(sim, 3),
+                "link": link,
+                "all_desc": all_desc,
+                "price": price,
+                "roast_level": roast_level,
             }
         )
     return answers
 
-def rank(answers):
 
+def rank_with_social(answers):
     for coffee in answers:
-
         roaster = coffee["roaster"].lower()
-
         if roaster in sentiments.keys() and len(sentiments[roaster]) > 0:
-
             avg_pos = 0
             avg_neg = 0
             comments = sentiments[roaster]
-
             for comment in comments:
-
                 avg_pos += comment[1]["pos"]
                 avg_neg += comment[1]["neg"]
-                
             avg_pos /= len(comments)
             avg_neg /= len(comments)
             coffee["reddit_score"] = avg_pos - avg_neg
-
         else:
-
             coffee["reddit_score"] = 0
-
         if coffee["reddit_score"] == 0:
             coffee["social_score"] = "Neutral"
         elif coffee["reddit_score"] < 0:
-            coffee["social_score"] = "{}% Negative".format(-round(coffee["reddit_score"] * 100, 2))
+            coffee["social_score"] = "{}% Negative".format(
+                -round(coffee["reddit_score"] * 100, 2)
+            )
         else:
-            coffee["social_score"] = "{}% Positive".format(round(coffee["reddit_score"] * 100, 2))
+            coffee["social_score"] = "{}% Positive".format(
+                round(coffee["reddit_score"] * 100, 2)
+            )
+        coffee["overall_score"] = (0.6 * coffee["sim_score"]) + (
+            0.4 * coffee["reddit_score"]
+        )
 
-    answers = sorted(answers, key=(lambda x: x["reddit_score"]), reverse=True)
+    answers = sorted(answers, key=(lambda x: x["overall_score"]), reverse=True)
 
     return answers
+
 
 @app.route("/")
 def home():
     return render_template("base.html", title="sample html")
+
 
 @app.route("/coffee")
 def coffee_search():
     text = request.args.get("title")
     return json.dumps(cosineSearch(text))
 
+
 @app.route("/coffee-SVD")
 def coffee_SVD_search():
     query = request.args.get("title")
+    selected_flavors = request.args.get("selected_flavors").split(",")
+    selected_roast = request.args.get("roast")
+    selected_price = request.args.get("price")
 
-    answers = rank(SVDSearch(query))
-    
-    return json.dumps(answers)
+    answers = SVDSearch(query)
 
-@app.route('/relevance-update', methods=['POST'])
+    filtered_answers = []
+
+    for data in answers:
+        valid_data = True
+        for flavor in selected_flavors:
+            if flavor not in data["all_desc"]:
+                valid_data = False
+                break
+        if valid_data:
+            filtered_answers.append(data)
+
+    final_answers = rank_with_social(filtered_answers)
+
+    final_filtered_answers = []
+
+    for coffee in final_answers:
+        coffee_price = coffee["price"]
+        start_index = coffee_price.find("$")
+        end_index = coffee_price.find("/")
+        coffee_price = float(coffee_price[start_index+1:end_index])
+
+        if (selected_roast == "Any" or coffee["roast_level"] == selected_roast) and coffee_price <= int(selected_price):
+            final_filtered_answers.append(coffee)
+
+    return json.dumps(final_filtered_answers)
+
+
+@app.route("/relevance-update", methods=["POST"])
 def feedback_submit():
     body = json.loads(request.data)
 
@@ -192,7 +238,8 @@ def feedback_submit():
     print("relevant:", query_to_relevant[query])
     print("irrelevant:", query_to_irrelevant[query])
 
-    return 'SUCCESS'
+    return "SUCCESS"
+
 
 if "DB_NAME" not in os.environ:
     app.run(debug=True, host="0.0.0.0", port=8000)
