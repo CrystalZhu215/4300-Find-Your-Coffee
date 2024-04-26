@@ -4,7 +4,8 @@ body {
   background-size: 100%;
 }
 
-#filter-text-val {
+#filter-text-val,
+#roast-select {
   background-color: transparent;
 }
 
@@ -156,4 +157,37 @@ body {
   font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
   font-size: 14px;
   font-weight: 1000;
+}
+
+.filter-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-top: 10px;
+  height: 30px;
+}
+
+#roast-select {
+  background-color: transparent;
+  border: 1px solid black;
+  border-radius: 30px;
+  padding: 5px;
+  margin-left: 10px;
+  height: 30px;
+}
+
+.filter-text {
+  margin: 0;
+}
+
+#price-select {
+  margin-left: 10px;
+}
+
+.margin-left {
+  margin-left: 10px;
+}
+
+.small-text {
+  font-size: 12px;
 }

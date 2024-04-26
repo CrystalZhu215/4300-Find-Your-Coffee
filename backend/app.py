@@ -183,6 +183,8 @@ def coffee_search():
 def coffee_SVD_search():
     query = request.args.get("title")
     selected_flavors = request.args.get("selected_flavors").split(",")
+    selected_roast = request.args.get("roast")
+    selected_price = request.args.get("price")
 
     answers = SVDSearch(query)
 
@@ -199,7 +201,18 @@ def coffee_SVD_search():
 
     final_answers = rank_with_social(filtered_answers)
 
-    return json.dumps(final_answers)
+    final_filtered_answers = []
+
+    for coffee in final_answers:
+        coffee_price = coffee["price"]
+        start_index = coffee_price.find("$")
+        end_index = coffee_price.find("/")
+        coffee_price = float(coffee_price[start_index+1:end_index])
+
+        if (selected_roast == "Any" or coffee["roast_level"] == selected_roast) and coffee_price <= int(selected_price):
+            final_filtered_answers.append(coffee)
+
+    return json.dumps(final_filtered_answers)
 
 
 @app.route("/relevance-update", methods=["POST"])
