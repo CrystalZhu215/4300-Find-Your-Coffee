@@ -107,6 +107,7 @@ body {
 
 .coffee-title {
   font-family: "Kanit", sans-serif;
+  font-size: 24px;
 }
 
 .coffee-desc {
@@ -149,4 +150,10 @@ body {
 
 .flavor-option:hover {
   cursor: pointer;
+}
+
+.bold {
+  font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
+  font-size: 14px;
+  font-weight: 1000;
 }

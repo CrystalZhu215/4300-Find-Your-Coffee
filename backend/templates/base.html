@@ -3,9 +3,14 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Kanit&family=Montserrat&family=Open+Sans:wght@500&display=swap"
-  rel="stylesheet" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+<link
+  href="https://fonts.googleapis.com/css2?family=Kanit&family=Montserrat&family=Open+Sans:wght@500&display=swap"
+  rel="stylesheet"
+/>
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+/>
 
 <body>
   <div class="full-body-container">
@@ -15,8 +20,10 @@
     <div id="flavor-options"></div>
     <div class="input-box" onclick="sendFocus()">
       <img src="{{ url_for('static', filename='images/mag.png') }}" />
-      <input placeholder="Type in a description of your favorite coffee flavors, types, preferences "
-        id="filter-text-val" />
+      <input
+        placeholder="Type in a description of your favorite coffee flavors, types, preferences "
+        id="filter-text-val"
+      />
     </div>
     <button class="search-button" onClick="filterText()">Search</button>
     <div></div>
@@ -77,13 +84,18 @@
     ) {
       return `<div class='border-box'>
                     <h3 class='coffee-title'>${coffee_name}</h3>
-                    <p class='coffee-title'>${roaster_name}</p>
+                    <p class='coffee-desc'><span class='bold'>Roaster</span>: ${roaster_name}</p>
                     <p class='coffee-desc'>${description}</p>
-                    <p class='coffee-desc'>Price Level: ${price}</p>
-                    <p class='coffee-desc'>Roast Level: ${roast_level}</p>
-                    <p class='coffee-desc'>Similarity score: ${sim_score}</p>
-                    <p class='coffee-desc'>Brand score (from r/coffee): ${social_score}</p>
-                    <a href=${link} target="_blank">${link}</a>
+                    <br />
+                    <p class='coffee-desc'><span class='bold'>Price</span>: ${price}</p>
+                    <p class='coffee-desc'><span class='bold'>Roast Level</span>: ${roast_level}</p>
+                    <p class='coffee-desc'><span class='bold'>Similarity score</span>: ${
+                      sim_score != 0
+                        ? sim_score
+                        : "0 - Type a description or like/dislike coffees to see similarity score!"
+                    }</p>
+                    <p class='coffee-desc'><span class='bold'>Roaster score (from r/coffee)</span>: ${social_score}</p>
+                    <a href=${link} target="_blank" class='coffee-desc'>${link}</a>
                     <br />
                     <br />
                     <button class="fa fa-thumbs-up" onclick='thumbsFeedback(true, "${coffee_name}")'></button>
@@ -126,10 +138,10 @@
       document.getElementById("answer-box").innerHTML = "";
       fetch(
         "/coffee-SVD?" +
-        new URLSearchParams({
-          title: document.getElementById("filter-text-val").value,
-          selected_flavors: selected_flavors,
-        }).toString()
+          new URLSearchParams({
+            title: document.getElementById("filter-text-val").value,
+            selected_flavors: selected_flavors,
+          }).toString()
       )
         .then((response) => response.json())
         .then((data) => {
