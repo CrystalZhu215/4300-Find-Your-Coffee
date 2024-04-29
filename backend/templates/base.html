@@ -12,6 +12,8 @@
   href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
 />
 
+
+
 <body>
   <div class="full-body-container">
     <div class="top-text">
@@ -55,6 +57,8 @@
     </div>
     <button class="search-button" onClick="filterText()">Search</button>
     <div></div>
+    <div class="loader-icon"></div>
+
   </div>
   <!-- need answer box or else no results appear -->
   <div id="answer-box"></div>
@@ -161,6 +165,7 @@
     }
 
     function filterText() {
+      document.querySelector(".loader-icon").style.display = "block";
       let selected_flavors = [];
       flavors.map((obj) => {
         if (obj.state) {
@@ -183,6 +188,7 @@
       )
         .then((response) => response.json())
         .then((data) => {
+          document.querySelector(".loader-icon").style.display = "none";
           if (data.length == 0) {
             let noResults = document.createElement("div");
             noResults.innerHTML = `<div>
